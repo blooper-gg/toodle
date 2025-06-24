@@ -1,0 +1,10 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "expand",
+  "plugin": ["typedoc-plugin-markdown"],
+  "out": "api",
+  "tsconfig": "../tsconfig.json",
+  "exclude": [],
+  "entryPoints": ["../src"],
+  "entryFileName": "index.md"
+}

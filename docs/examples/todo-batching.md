@@ -1,0 +1,4 @@
+- batching by default
+- custom shader batching
+- z-index batching
+- batch debugging

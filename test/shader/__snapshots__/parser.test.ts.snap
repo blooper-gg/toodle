@@ -1,0 +1,119 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`combineShaderCode should combine shader code 1`] = `
+"
+
+//
+// SECTION: Struct Definitions
+//
+
+struct InstanceData {}
+
+
+struct VertexInput {
+  @builtin(vertex_index) vertexIndex: u32,
+  @builtin(instance_index) instanceIndex: u32,
+}
+
+struct VertexOutput {
+  @builtin(position) engine_clip_position : vec4<f32>,
+}
+
+struct FragmentInput {
+  @builtin(position) engine_clip_position : vec4<f32>,
+}
+
+struct FragmentOutput {
+  color: vec4<f32>,
+}
+
+//
+// SECTION: Base Entrypoints
+//
+
+@vertex
+fn base_vertex_entrypoint(input: VertexInput) -> VertexOutput {
+  return default_vertex_shader(input);
+}
+
+@fragment
+fn base_fragment_entrypoint(vertex: VertexOutput) -> @location(0) vec4<f32> {
+  let output = base_fragment_shader(vertex);
+  return output.color;
+}
+
+//
+// SECTION: Base Shaders
+//
+
+const pos = array(vec2f(-1, -1), vec2f(1, -1), vec2f(-1, 1), vec2f(1, 1));
+
+fn base_vertex_shader(input: VertexInput) -> VertexOutput {
+  var output : VertexOutput;
+  output.engine_clip_position = vec4f(pos[input.vertexIndex], 0.0, 1.0);
+  return output;
+}
+
+fn base_fragment_shader(vertex: VertexOutput) -> FragmentOutput {
+  var output : FragmentOutput;
+  output.color = vec4f(1.0, 0.0, 1.0, 1.0);
+  return output;
+}
+
+
+//==========
+
+@vertex
+fn myVertex(input: VertexInput) -> VertexOutput {
+  var output = default_vertex_shader(input);
+  return output;
+}
+
+@fragment
+fn myFragment(vertex: VertexOutput) -> @location(0) vec4f {
+  var output = default_fragment_shader(vertex);
+  return output.color;
+}"
+`;
+
+exports[`shader code to pipeline should generate a pipeline descriptor 1`] = `
+{
+  "fragment": {
+    "entryPoint": "myFragment",
+    "module": {
+      "__brand": "GPUShaderModule",
+      "getCompilationInfo": [Function],
+      "label": "test",
+    },
+    "targets": [
+      {
+        "blend": {
+          "alpha": {
+            "dstFactor": "one-minus-src-alpha",
+            "operation": "add",
+            "srcFactor": "one",
+          },
+          "color": {
+            "dstFactor": "one-minus-src-alpha",
+            "operation": "add",
+            "srcFactor": "src-alpha",
+          },
+        },
+        "format": "bgra8unorm",
+      },
+    ],
+  },
+  "label": "test pipeline",
+  "primitive": {
+    "topology": "triangle-strip",
+  },
+  "vertex": {
+    "entryPoint": "myVertex",
+    "module": {
+      "__brand": "GPUShaderModule",
+      "getCompilationInfo": [Function],
+      "label": "test",
+    },
+  },
+}
+`;

@@ -1,0 +1,26 @@
+{
+  "name": "docs",
+  "module": "index.ts",
+  "dependencies": {
+    "@blooper.gg/toodle": "../"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@webgpu/types": "^0.1.51",
+    "bun": "^1.1.36",
+    "typedoc": "^0.28.3",
+    "typedoc-plugin-markdown": "^4.6.3",
+    "vitepress": "^1.5.0",
+    "vue": "^3.5.13"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview",
+    "predocs:build": "bunx typedoc"
+  },
+  "type": "module"
+}
