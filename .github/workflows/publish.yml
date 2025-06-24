@@ -16,7 +16,6 @@ permissions:
 
 env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
 jobs:
   publish:
@@ -38,7 +37,6 @@ jobs:
         run: |
           git config --global user.name 'Toodle CI'
           git config --global user.email 'ci@toodle.gg'
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/blooper-gg/toodle.git
 
       - name: Publish
         run: bun ./scripts/publish.ts
