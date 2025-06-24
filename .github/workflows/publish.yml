@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "src/**"
-      - "package.json"
+      - nu11/actions
+    # paths:
+    #   - "src/**"
+    #   - "package.json"
 
   workflow_dispatch:
 

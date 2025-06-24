@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - nu11/actions
   pull_request: {}
   workflow_dispatch:
 
