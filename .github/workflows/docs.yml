@@ -3,9 +3,10 @@ name: Publish docs
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches: ["main", "nu11/actions"]
     paths:
       - "docs/**"
+      - ".github/workflows/docs.yml"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -41,8 +42,8 @@ jobs:
         working-directory: ./docs
         run: |
           bun run docs:build
-          mkdir -p ../public/f849595b3ed13fc956fc1459a5cb5f0228f9d259
-          mv .vitepress/dist/* ../public/f849595b3ed13fc956fc1459a5cb5f0228f9d259/
+          mkdir -p ../public/
+          mv .vitepress/dist/* ../public/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -1,14 +1,18 @@
-name: Publish package to github registry
+name: Publish package to npm
 
 on:
   push:
     branches:
       - main
+      - nu11/actions
     paths:
       - "src/**"
       - "package.json"
 
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -24,12 +28,6 @@ jobs:
 
       - name: ⎔ Setup bun
         uses: oven-sh/setup-bun@v1
-
-      # node is needed for npm view unfortunately
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
 
       - name: 💾 Install dependencies
         run: |

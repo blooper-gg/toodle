@@ -8,6 +8,7 @@ const toodlePattern =
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Toodle",
+  base: '/toodle/',
   description: "A WebGPU 2d Renderer",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
