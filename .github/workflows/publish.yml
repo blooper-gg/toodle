@@ -11,9 +11,12 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
 jobs:
   publish:
