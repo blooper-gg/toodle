@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  actions: write
+  contents: write
+
+jobs:
+  biome:
+    name: 🐝 Biome
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: 💾 Install dependencies
+        run: bun install
+
+      - name: 🔬 Biome
+        run: bun run biome:check
+
+  typecheck:
+    name: ʦ TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: 💾 Install dependencies
+        run: |
+          bun install
+          (cd docs && bun install --frozen-lockfile)
+
+      - name: 🩺 Typecheck examples
+        run: bun run tsc --noEmit
+
+      - name: 🏚️ Check build
+        run: bun run build
+
+  test:
+    name: ❎ Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: 💾 Install dependencies
+        run: bun install
+
+      - name: 🔨 Test
+        run: bun test

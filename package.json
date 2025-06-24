@@ -1,0 +1,42 @@
+{
+  "name": "@blooper.gg/toodle",
+  "version": "0.0.74",
+  "type": "module",
+  "files": ["dist", "src"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./src/mod.ts",
+      "types": "./src/mod.ts"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "bun build src/mod.ts --outdir ./dist --sourcemap=linked && bun run build:tsc",
+    "build:tsc": "tsc -p scripts/tsconfig.publish.json",
+    "preview": "vite preview",
+    "biome:check": "biome check ./src ./examples",
+    "biome:write": "biome check ./src ./examples --write",
+    "ci": "bun run biome:check && bun test && bun tsc",
+    "docs:dev": "(cd docs && bun run docs:dev)",
+    "docs:build": "(cd docs && bun run docs:build)"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/bun": "^1.1.13",
+    "@webgpu/types": "^0.1.51",
+    "vite": "^5.4.11"
+  },
+  "peerDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2",
+    "webgpu-utils": "^1.9.3",
+    "wgpu-matrix": "^3.3.0",
+    "wgsl_reflect": "^1.0.14"
+  }
+}
