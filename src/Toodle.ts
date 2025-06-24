@@ -630,7 +630,9 @@ export class Toodle {
     /**
      * Get the GPU device used by this Toodle instance.
      */
-    device: (): GPUDevice => { return this.#device },
+    device: (): GPUDevice => {
+      return this.#device;
+    },
   };
 }
 

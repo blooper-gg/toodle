@@ -4,6 +4,14 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://github.com/blooper-gg/toodle/pkgs/npm/toodle/versions)
 
+## [0.0.82](https://github.com/blooper-gg/toodle/releases/tag/0.0.82)
+
+- Add `toodle.extra.device` to get the GPU device used by the toodle instance.
+
+## [0.0.80](https://github.com/blooper-gg/toodle/releases/tag/0.0.80)
+
+- Fork public domain project to blooper-gg organization
+
 ## [0.0.72](https://github.com/blooper-gg/toodle/releases/tag/0.0.72)
 
 - Add an optional `index` parameter to `node.add` to specify where to insert the new child for full control over the draw order when not using layers.
