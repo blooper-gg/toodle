@@ -2,7 +2,7 @@ import { $ } from "bun"
 import packageJson from "../package.json"
 
 const status = await $`git status -s`.arrayBuffer()
-if (status.byteLength !== 0) {
+if (status.byteLength !== 0 && !process.env.FORCE) {
   throw new Error("git status is not empty, please commit or stash changes before publishing")
 }
 
@@ -11,7 +11,7 @@ if (!process.env.NPM_TOKEN) {
 }
 
 
-const remoteVersion = await tryP(() => $`npm view ${packageJson.name} version`.text(), "0.0.0")
+const remoteVersion = await getRemoteVersion(packageJson.name)
 const npmVersion = remoteVersion.split(".").map((str) => Number.parseInt(str))
 const packageJsonVersion = packageJson.version.split(".").map((str) => Number.parseInt(str))
 
@@ -42,11 +42,17 @@ await $`git push --tags`
 await Bun.write(".npmrc", `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}`)
 await $`bun publish`
 
-async function tryP<T>(fn: () => Promise<T>, fallback: T) {
-  try {
-    return await fn()
-  } catch(err) {
-    console.error(err)
-    return fallback
+async function getRemoteVersion(name: string) {
+  const results = await fetch(`https://registry.npmjs.org/${name}`)
+  const json = await results.json()
+
+  if (json['error'] === 'Not found') {
+    console.warn(`${name} not found on npm, using 0.0.0 as latest version`)
+    return "0.0.0"
+  } else if (!json["dist-tags"] || !json["dist-tags"].latest) {
+    console.error(json)
+    throw new Error(`${name} found on npm but no latest version`)
   }
+
+  return json["dist-tags"].latest || "0.0.0"
 }
