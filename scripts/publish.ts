@@ -40,7 +40,7 @@ await $`bun run build`
 await $`git tag "${packageJson.version}"`
 await $`git push --tags`
 await Bun.write(".npmrc", `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}`)
-await $`npm publish --no-git-checks`
+await $`bun publish`
 
 async function tryP<T>(fn: () => Promise<T>, fallback: T) {
   try {
