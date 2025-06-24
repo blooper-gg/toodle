@@ -622,6 +622,16 @@ export class Toodle {
     this.#device.destroy();
     this.assets.destroy();
   }
+
+  /**
+   * Advanced and niche features
+   */
+  extra = {
+    /**
+     * Get the GPU device used by this Toodle instance.
+     */
+    device: (): GPUDevice => { return this.#device },
+  };
 }
 
 export type StartFrameOptions = {
