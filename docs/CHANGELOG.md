@@ -4,6 +4,10 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://github.com/blooper-gg/toodle/pkgs/npm/toodle/versions)
 
+## [0.0.83](https://github.com/blooper-gg/toodle/releases/tag/0.0.83)
+
+- Allow registering bundles with pre-baked texture atlases.
+
 ## [0.0.82](https://github.com/blooper-gg/toodle/releases/tag/0.0.82)
 
 - Add `toodle.extra.device` to get the GPU device used by the toodle instance.

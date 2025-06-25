@@ -207,35 +207,99 @@ export class AssetManager {
     bundleId: BundleId,
     opts: BundleOpts,
   ): Promise<BundleId> {
-    const images = new Map<string, TextureWithMetadata>();
+    if ("textures" in opts) {
+      const images = new Map<string, TextureWithMetadata>();
 
-    await Promise.all(
-      Object.entries(opts.textures).map(async ([id, url]) => {
-        const bitmap = await getBitmapFromUrl(url);
-        let textureWrapper: TextureWithMetadata = this.#wrapBitmapToTexture(
-          bitmap,
-          id,
-        );
+      console.time(`[RegisterBundle] Loading ${bundleId}`);
+      let networkLoadTime = 0;
+      await Promise.all(
+        Object.entries(opts.textures).map(async ([id, url]) => {
+          const now = performance.now();
+          const bitmap = await getBitmapFromUrl(url);
+          networkLoadTime += performance.now() - now;
+          let textureWrapper: TextureWithMetadata = this.#wrapBitmapToTexture(
+            bitmap,
+            id,
+          );
 
-        if (opts.cropTransparentPixels) {
-          textureWrapper =
-            await this.#cropComputeShader.processTexture(textureWrapper);
+          if (opts.cropTransparentPixels) {
+            textureWrapper =
+              await this.#cropComputeShader.processTexture(textureWrapper);
+          }
+          images.set(id, textureWrapper);
+        }),
+      );
+      console.timeEnd(`[RegisterBundle] Loading ${bundleId}`);
+
+      console.log(`[RegisterBundle] Network load time: ${networkLoadTime}ms`);
+
+      console.time("[RegisterBundle] Packing bitmaps to atlas");
+      const atlases = await packBitmapsToAtlas(
+        images,
+        this.#limits.textureSize,
+        this.#device,
+      );
+
+      this.#bundles.set(bundleId, {
+        atlases,
+        atlasIndices: [],
+        isLoaded: false,
+      });
+      console.timeEnd("[RegisterBundle] Packing bitmaps to atlas");
+    } else {
+      const atlases: CpuTextureAtlas[] = [];
+      for (const atlas of opts.atlases) {
+        const atlasDef = await (await fetch(atlas.json)).json();
+        const bitmap = await getBitmapFromUrl(atlas.png);
+
+        console.log(atlasDef);
+
+        type PixiFrame = {
+          frame: { x: number; y: number; w: number; h: number };
+          rotated: boolean;
+          trimmed: boolean;
+          sourceSize: { w: number; h: number };
+          spriteSourceSize: { x: number; y: number; w: number; h: number };
+        };
+
+        const cpuTextureAtlas: CpuTextureAtlas = {
+          texture: bitmap,
+          textureRegions: new Map(),
+        };
+
+        for (const [assetId, frame] of Object.entries(atlasDef.frames) as [
+          string,
+          PixiFrame,
+        ][]) {
+          cpuTextureAtlas.textureRegions.set(assetId, {
+            drawOffset: {
+              x: frame.spriteSourceSize.x,
+              y: frame.spriteSourceSize.y,
+            },
+            originalSize: {
+              width: frame.sourceSize.w,
+              height: frame.sourceSize.h,
+            },
+            uvOffset: {
+              x: frame.frame.x / bitmap.width,
+              y: frame.frame.y / bitmap.height,
+            },
+            uvScale: {
+              width: frame.frame.w / bitmap.width,
+              height: frame.frame.h / bitmap.height,
+            },
+          });
         }
-        images.set(id, textureWrapper);
-      }),
-    );
 
-    const atlases = await packBitmapsToAtlas(
-      images,
-      this.#limits.textureSize,
-      this.#device,
-    );
+        atlases.push(cpuTextureAtlas);
+      }
 
-    this.#bundles.set(bundleId, {
-      atlases,
-      atlasIndices: [],
-      isLoaded: false,
-    });
+      this.#bundles.set(bundleId, {
+        atlases,
+        atlasIndices: [],
+        isLoaded: false,
+      });
+    }
 
     if (opts.autoLoad) {
       await this.loadBundle(bundleId);
