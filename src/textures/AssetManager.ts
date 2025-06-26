@@ -252,8 +252,6 @@ export class AssetManager {
         const atlasDef = await (await fetch(atlas.json)).json();
         const bitmap = await getBitmapFromUrl(atlas.png);
 
-        console.log(atlasDef);
-
         type PixiFrame = {
           frame: { x: number; y: number; w: number; h: number };
           rotated: boolean;
