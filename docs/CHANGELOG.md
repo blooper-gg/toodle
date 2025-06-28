@@ -4,6 +4,11 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://github.com/blooper-gg/toodle/pkgs/npm/toodle/versions)
 
+## [0.0.83](https://github.com/blooper-gg/toodle/releases/tag/0.0.83)
+
+- Allow registering bundles with pre-baked texture atlases, see [pre-baking atlases](https://toodle.gg/examples/texture-bundles-prebaked.html) for more details.
+- Add `toodle.assets.textureIds` to get an array of ids of all currently loaded textures.
+
 ## [0.0.82](https://github.com/blooper-gg/toodle/releases/tag/0.0.82)
 
 - Add `toodle.extra.device` to get the GPU device used by the toodle instance.
@@ -34,7 +39,7 @@ TextNodes are now easier to serialize/deserialize.
 
 Transparent cropping is in! Disabled by default, but can be enabled by passing `cropTransparentPixels: true` to `AssetManager.registerBundle`.
 
-See the [transparent cropping example](https://toodle.gg/f849595b3ed13fc956fc1459a5cb5f0228f9d259/examples/transparent-cropping.html) for more details.
+See the [transparent cropping example](https://toodle.gg/examples/transparent-cropping.html) for more details.
 
 - Add `cropTransparentPixels` option to `AssetManager.registerBundle` to strip transparent pixels from textures.
 - Add `autoLoad` option to `AssetManager.registerBundle` to automatically load a bundle when it is registered.
@@ -70,7 +75,7 @@ toodle.shapes.Rect({ rotationRadians: Math.PI / 2})
 
 ## [0.0.64](https://github.com/blooper-gg/toodle/releases/tag/0.0.64)
 
-Allow [removal of nodes](https://toodle.gg/f849595b3ed13fc956fc1459a5cb5f0228f9d259/examples/add-and-remove-children.html)
+Allow [removal of nodes](https://toodle.gg/examples/add-and-remove-children.html)
 
 - Added `node.delete()` to remove a node from a parent and all of it's children.
 - Added `node.remove(node)` to remove a node from a parent without deleting it.

@@ -8,9 +8,11 @@ import { MsdfFont } from "../text/MsdfFont";
 import { TextShader } from "../text/TextShader";
 import { TextureComputeShader } from "./TextureComputeShader";
 import type {
+  AtlasBundleOpts,
   AtlasCoords,
-  BundleOpts,
   CpuTextureAtlas,
+  PixiRegion,
+  TextureBundleOpts,
   TextureRegion,
   TextureWithMetadata,
 } from "./types";
@@ -121,6 +123,13 @@ export class AssetManager {
   }
 
   /**
+   * A read-only array of all currently loaded texture ids.
+   */
+  get textureIds() {
+    return Array.from(this.#textures.keys());
+  }
+
+  /**
    * Debug method to load a set of textures from a record of URLS.
    *
    * @param textures Collection of strings and URLs representing the texture name and target file
@@ -135,7 +144,7 @@ export class AssetManager {
    *   "myImage": new URL("assets/image.png", "https://mywebsite.com"),
    * });
    */
-  async loadTextures(opts: BundleOpts["textures"]): Promise<void> {
+  async loadTextures(opts: TextureBundleOpts["textures"]): Promise<void> {
     await Promise.all(
       Object.entries(opts).map(([id, url]) => this.loadTexture(id, url, opts)),
     );
@@ -154,7 +163,7 @@ export class AssetManager {
   async loadTexture(
     id: TextureId,
     url: URL | ImageBitmap,
-    options?: Partial<BundleOpts>,
+    options?: Partial<TextureBundleOpts>,
   ) {
     const bitmap =
       url instanceof ImageBitmap ? url : await getBitmapFromUrl(url);
@@ -205,37 +214,13 @@ export class AssetManager {
    */
   async registerBundle(
     bundleId: BundleId,
-    opts: BundleOpts,
+    opts: TextureBundleOpts | AtlasBundleOpts,
   ): Promise<BundleId> {
-    const images = new Map<string, TextureWithMetadata>();
-
-    await Promise.all(
-      Object.entries(opts.textures).map(async ([id, url]) => {
-        const bitmap = await getBitmapFromUrl(url);
-        let textureWrapper: TextureWithMetadata = this.#wrapBitmapToTexture(
-          bitmap,
-          id,
-        );
-
-        if (opts.cropTransparentPixels) {
-          textureWrapper =
-            await this.#cropComputeShader.processTexture(textureWrapper);
-        }
-        images.set(id, textureWrapper);
-      }),
-    );
-
-    const atlases = await packBitmapsToAtlas(
-      images,
-      this.#limits.textureSize,
-      this.#device,
-    );
-
-    this.#bundles.set(bundleId, {
-      atlases,
-      atlasIndices: [],
-      isLoaded: false,
-    });
+    if ("textures" in opts) {
+      await this.#registerBundleFromTextures(bundleId, opts);
+    } else {
+      await this.#registerBundleFromAtlases(bundleId, opts);
+    }
 
     if (opts.autoLoad) {
       await this.loadBundle(bundleId);
@@ -267,6 +252,12 @@ export class AssetManager {
     bundle.isLoaded = true;
   }
 
+  /**
+   * Unload a bundle of textures from the gpu - this marks the gpu-side texture atlas
+   * as available for future texture loading.
+   *
+   * @param bundleId - The id of the bundle to unload
+   */
   async unloadBundle(bundleId: BundleId) {
     const bundle = this.#bundles.get(bundleId);
     if (!bundle) {
@@ -288,6 +279,13 @@ export class AssetManager {
     bundle.atlasIndices = [];
   }
 
+  /**
+   * Load a font to the gpu
+   *
+   * @param id - The id of the font to load
+   * @param url - The url of the font to load
+   * @param fallbackCharacter - The character to use as a fallback if the font does not contain a character to be rendererd
+   */
   async loadFont(id: string, url: URL, fallbackCharacter = "_") {
     const font = await MsdfFont.create(id, url);
     font.fallbackCharacter = fallbackCharacter;
@@ -382,6 +380,102 @@ export class AssetManager {
       [bitmap.width, bitmap.height],
     );
     return texture;
+  }
+
+  async #registerBundleFromTextures(
+    bundleId: BundleId,
+    opts: TextureBundleOpts,
+  ) {
+    const images = new Map<string, TextureWithMetadata>();
+
+    let networkLoadTime = 0;
+    await Promise.all(
+      Object.entries(opts.textures).map(async ([id, url]) => {
+        const now = performance.now();
+        const bitmap = await getBitmapFromUrl(url);
+        networkLoadTime += performance.now() - now;
+        let textureWrapper: TextureWithMetadata = this.#wrapBitmapToTexture(
+          bitmap,
+          id,
+        );
+
+        if (opts.cropTransparentPixels) {
+          textureWrapper =
+            await this.#cropComputeShader.processTexture(textureWrapper);
+        }
+        images.set(id, textureWrapper);
+      }),
+    );
+
+    const atlases = await packBitmapsToAtlas(
+      images,
+      this.#limits.textureSize,
+      this.#device,
+    );
+
+    this.#bundles.set(bundleId, {
+      atlases,
+      atlasIndices: [],
+      isLoaded: false,
+    });
+  }
+
+  async #registerBundleFromAtlases(bundleId: BundleId, opts: AtlasBundleOpts) {
+    const atlases: CpuTextureAtlas[] = [];
+    for (const atlas of opts.atlases) {
+      const jsonUrl =
+        atlas.json ??
+        new URL(
+          atlas.png!.toString().replace(".png", ".json"),
+          atlas.png!.origin,
+        );
+      const pngUrl =
+        atlas.png ??
+        new URL(
+          atlas.json!.toString().replace(".json", ".png"),
+          atlas.json!.origin,
+        );
+
+      const atlasDef = await (await fetch(jsonUrl)).json();
+      const bitmap = await getBitmapFromUrl(pngUrl);
+
+      const cpuTextureAtlas: CpuTextureAtlas = {
+        texture: bitmap,
+        textureRegions: new Map(),
+      };
+
+      for (const [assetId, frame] of Object.entries(atlasDef.frames) as [
+        string,
+        PixiRegion,
+      ][]) {
+        cpuTextureAtlas.textureRegions.set(assetId, {
+          drawOffset: {
+            x: frame.spriteSourceSize.x,
+            y: frame.spriteSourceSize.y,
+          },
+          originalSize: {
+            width: frame.sourceSize.w,
+            height: frame.sourceSize.h,
+          },
+          uvOffset: {
+            x: frame.frame.x / bitmap.width,
+            y: frame.frame.y / bitmap.height,
+          },
+          uvScale: {
+            width: frame.frame.w / bitmap.width,
+            height: frame.frame.h / bitmap.height,
+          },
+        });
+      }
+
+      atlases.push(cpuTextureAtlas);
+    }
+
+    this.#bundles.set(bundleId, {
+      atlases,
+      atlasIndices: [],
+      isLoaded: false,
+    });
   }
 
   /**

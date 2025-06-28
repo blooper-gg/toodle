@@ -59,6 +59,10 @@ export default defineConfig({
         text: "Asset Management",
         items: [
           { text: "Bundles", link: "/examples/texture-bundles" },
+          {
+            text: "Pre-baking Atlases",
+            link: "/examples/texture-bundles-prebaked",
+          },
           { text: "Cropping", link: "/examples/transparent-cropping" },
         ],
       },
