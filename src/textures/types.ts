@@ -55,10 +55,20 @@ export type TextureWithMetadata = {
   originalSize: Size;
 };
 
-export type AtlasDef = {
-  json: URL;
-  png: URL;
-};
+/** A definition for a pre-baked texture atlas */
+export type AtlasDef =
+  | {
+      /** The url of the atlas png file, if empty the png is assumed to be next to the json file */
+      png?: URL;
+      /** The url of the atlas json file, if empty the json is assumed to be next to the png file */
+      json: URL;
+    }
+  | {
+      /** The url of the atlas png file, if empty the png is assumed to be next to the json file */
+      png: URL;
+      /** The url of the atlas json file, if empty the json is assumed to be next to the png file */
+      json?: URL;
+    };
 
 /** Bundle options for registering multiple individual textures */
 export type TextureBundleOpts = {
@@ -88,10 +98,18 @@ export type AtlasBundleOpts = {
    *
    * @example
    *
-   * {
-   *   json: new URL('https://example.com/atlas.json'),
-   *   png: new URL('https://example.com/atlas.png'),
-   * }
+   * [
+   *   {
+   *     json: new URL('https://example.com/atlas.json'),
+   *   },
+   *   {
+   *     png: new URL('https://example.com/atlas.png'),
+   *   },
+   *   {
+   *     json: new URL('https://example.com/metadata/atlas.json'),
+   *     png: new URL('https://example.com/images/atlas.png'),
+   *   },
+   * ]
    */
   atlases: AtlasDef[];
 

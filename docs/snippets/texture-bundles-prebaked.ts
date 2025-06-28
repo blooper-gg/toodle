@@ -14,11 +14,11 @@ const basePath = "/prebaked";
 await toodle.assets.registerBundle("match_vfx", {
   atlases: [
     {
+      // if you don't provide a png, the json file is assumed to be next to the png file
       json: new URL(`${basePath}/match_vfx-0.json`, baseUrl),
-      png: new URL(`${basePath}/match_vfx-0.png`, baseUrl),
     },
     {
-      json: new URL(`${basePath}/match_vfx-1.json`, baseUrl),
+      // if you don't provide a json, the png file is assumed to be next to the json file
       png: new URL(`${basePath}/match_vfx-1.png`, baseUrl),
     },
   ],

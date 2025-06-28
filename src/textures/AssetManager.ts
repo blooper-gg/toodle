@@ -423,8 +423,21 @@ export class AssetManager {
   async #registerBundleFromAtlases(bundleId: BundleId, opts: AtlasBundleOpts) {
     const atlases: CpuTextureAtlas[] = [];
     for (const atlas of opts.atlases) {
-      const atlasDef = await (await fetch(atlas.json)).json();
-      const bitmap = await getBitmapFromUrl(atlas.png);
+      const jsonUrl =
+        atlas.json ??
+        new URL(
+          atlas.png!.toString().replace(".png", ".json"),
+          atlas.png!.origin,
+        );
+      const pngUrl =
+        atlas.png ??
+        new URL(
+          atlas.json!.toString().replace(".json", ".png"),
+          atlas.json!.origin,
+        );
+
+      const atlasDef = await (await fetch(jsonUrl)).json();
+      const bitmap = await getBitmapFromUrl(pngUrl);
 
       const cpuTextureAtlas: CpuTextureAtlas = {
         texture: bitmap,
