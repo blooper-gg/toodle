@@ -1,0 +1,936 @@
+{
+  "frames": {
+    "vfx/hitsparks/pl_light_slash_5.png": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 720,
+        "h": 720
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 720,
+        "h": 720
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/gen_orbs_yellow_v2_3.png": {
+      "frame": {
+        "x": 724,
+        "y": 2,
+        "w": 426,
+        "h": 482
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 126,
+        "y": 128,
+        "w": 426,
+        "h": 482
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_heavy_slash_4.png": {
+      "frame": {
+        "x": 2,
+        "y": 724,
+        "w": 605,
+        "h": 541
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 29,
+        "y": 62,
+        "w": 605,
+        "h": 541
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_new_hitspark_a_4.png": {
+      "frame": {
+        "x": 1152,
+        "y": 2,
+        "w": 669,
+        "h": 643
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 28,
+        "y": 20,
+        "w": 669,
+        "h": 643
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_heavy_sharp_b_1.png": {
+      "frame": {
+        "x": 724,
+        "y": 486,
+        "w": 275,
+        "h": 312
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 224,
+        "y": 230,
+        "w": 275,
+        "h": 312
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_heavy_slash_5.png": {
+      "frame": {
+        "x": 1001,
+        "y": 647,
+        "w": 683,
+        "h": 586
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 42,
+        "w": 683,
+        "h": 586
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_heavy_sharp_b_2.png": {
+      "frame": {
+        "x": 2,
+        "y": 1267,
+        "w": 535,
+        "h": 530
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 123,
+        "y": 106,
+        "w": 535,
+        "h": 530
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_light_sharp_e_5.png": {
+      "frame": {
+        "x": 2,
+        "y": 1799,
+        "w": 523,
+        "h": 570
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 151,
+        "y": 18,
+        "w": 523,
+        "h": 570
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_light_sharp_e_4.png": {
+      "frame": {
+        "x": 539,
+        "y": 1267,
+        "w": 525,
+        "h": 627
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 148,
+        "y": 11,
+        "w": 525,
+        "h": 627
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_heavy_sharp_b_3.png": {
+      "frame": {
+        "x": 1066,
+        "y": 1235,
+        "w": 688,
+        "h": 676
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 23,
+        "y": 30,
+        "w": 688,
+        "h": 676
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_heavy_slash_2.png": {
+      "frame": {
+        "x": 527,
+        "y": 1896,
+        "w": 523,
+        "h": 426
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 136,
+        "y": 137,
+        "w": 523,
+        "h": 426
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_new_hitspark_a_2.png": {
+      "frame": {
+        "x": 609,
+        "y": 800,
+        "w": 341,
+        "h": 385
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 198,
+        "y": 130,
+        "w": 341,
+        "h": 385
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_new_hitspark_a_3.png": {
+      "frame": {
+        "x": 1823,
+        "y": 2,
+        "w": 467,
+        "h": 503
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 141,
+        "y": 87,
+        "w": 467,
+        "h": 503
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_heavy_slash_3.png": {
+      "frame": {
+        "x": 2292,
+        "y": 2,
+        "w": 629,
+        "h": 523
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 67,
+        "y": 89,
+        "w": 629,
+        "h": 523
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_heavy_slash_1.png": {
+      "frame": {
+        "x": 1823,
+        "y": 507,
+        "w": 394,
+        "h": 341
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 199,
+        "y": 188,
+        "w": 394,
+        "h": 341
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_light_sharp_e_3.png": {
+      "frame": {
+        "x": 2219,
+        "y": 527,
+        "w": 474,
+        "h": 538
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 170,
+        "y": 60,
+        "w": 474,
+        "h": 538
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_heavy_sharp_b_4.png": {
+      "frame": {
+        "x": 1756,
+        "y": 1067,
+        "w": 695,
+        "h": 699
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 17,
+        "w": 695,
+        "h": 699
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/pl_light_sharp_e_2.png": {
+      "frame": {
+        "x": 1052,
+        "y": 1913,
+        "w": 265,
+        "h": 338
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 242,
+        "y": 180,
+        "w": 265,
+        "h": 338
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/gen_cone_yellow_v2_3.png": {
+      "frame": {
+        "x": 1319,
+        "y": 1913,
+        "w": 327,
+        "h": 455
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 37,
+        "y": 166,
+        "w": 327,
+        "h": 455
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/hitsparks/gen_cone_yellow_v2_2.png": {
+      "frame": {
+        "x": 1648,
+        "y": 1913,
+        "w": 263,
+        "h": 329
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 103,
+        "y": 207,
+        "w": 263,
+        "h": 329
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/burst/pl_burst_bg_5.png": {
+      "frame": {
+        "x": 2,
+        "y": 2371,
+        "w": 847,
+        "h": 826
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 68,
+        "y": 94,
+        "w": 847,
+        "h": 826
+      },
+      "sourceSize": {
+        "w": 1000,
+        "h": 1000
+      }
+    },
+    "vfx/burst/pl_burst_fg_4.png": {
+      "frame": {
+        "x": 851,
+        "y": 2370,
+        "w": 556,
+        "h": 599
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 273,
+        "y": 190,
+        "w": 556,
+        "h": 599
+      },
+      "sourceSize": {
+        "w": 1000,
+        "h": 1000
+      }
+    },
+    "vfx/burst/pl_burst_fg_5.png": {
+      "frame": {
+        "x": 1913,
+        "y": 1768,
+        "w": 952,
+        "h": 848
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 62,
+        "w": 952,
+        "h": 848
+      },
+      "sourceSize": {
+        "w": 1000,
+        "h": 1000
+      }
+    },
+    "vfx/burst/pl_burst_fg_7.png": {
+      "frame": {
+        "x": 2923,
+        "y": 2,
+        "w": 900,
+        "h": 928
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 73,
+        "y": 22,
+        "w": 900,
+        "h": 928
+      },
+      "sourceSize": {
+        "w": 1000,
+        "h": 1000
+      }
+    },
+    "vfx/burst/pl_burst_fg_1.png": {
+      "frame": {
+        "x": 1409,
+        "y": 2370,
+        "w": 311,
+        "h": 249
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 372,
+        "y": 360,
+        "w": 311,
+        "h": 249
+      },
+      "sourceSize": {
+        "w": 1000,
+        "h": 1000
+      }
+    },
+    "vfx/jump_rings/jump_v2_5.png": {
+      "frame": {
+        "x": 851,
+        "y": 2971,
+        "w": 676,
+        "h": 170
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 21,
+        "y": 176,
+        "w": 676,
+        "h": 170
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/jump_rings/jump_v2_4.png": {
+      "frame": {
+        "x": 1409,
+        "y": 2621,
+        "w": 668,
+        "h": 191
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 22,
+        "y": 191,
+        "w": 668,
+        "h": 191
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/jump_rings/jump_v2_3.png": {
+      "frame": {
+        "x": 1409,
+        "y": 2814,
+        "w": 643,
+        "h": 134
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 34,
+        "y": 250,
+        "w": 643,
+        "h": 134
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/jump_rings/jump_v2_2.png": {
+      "frame": {
+        "x": 1686,
+        "y": 850,
+        "w": 473,
+        "h": 108
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 119,
+        "y": 278,
+        "w": 473,
+        "h": 108
+      },
+      "sourceSize": {
+        "w": 720,
+        "h": 720
+      }
+    },
+    "vfx/dash_fire/dash_air_cloud_4.png": {
+      "frame": {
+        "x": 1529,
+        "y": 2950,
+        "w": 255,
+        "h": 244
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 169,
+        "y": 81,
+        "w": 255,
+        "h": 244
+      },
+      "sourceSize": {
+        "w": 900,
+        "h": 480
+      }
+    },
+    "vfx/dash_fire/dash_air_cloud_5.png": {
+      "frame": {
+        "x": 1786,
+        "y": 2950,
+        "w": 291,
+        "h": 234
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 93,
+        "y": 100,
+        "w": 291,
+        "h": 234
+      },
+      "sourceSize": {
+        "w": 900,
+        "h": 480
+      }
+    },
+    "vfx/dash_fire/dash_air_cloud_7.png": {
+      "frame": {
+        "x": 2079,
+        "y": 2618,
+        "w": 315,
+        "h": 234
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 96,
+        "w": 315,
+        "h": 234
+      },
+      "sourceSize": {
+        "w": 900,
+        "h": 480
+      }
+    },
+    "vfx/dash_fire/dash_air_cloud_6.png": {
+      "frame": {
+        "x": 2079,
+        "y": 2854,
+        "w": 301,
+        "h": 255
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 52,
+        "y": 92,
+        "w": 301,
+        "h": 255
+      },
+      "sourceSize": {
+        "w": 900,
+        "h": 480
+      }
+    },
+    "vfx/dash_fire/dash_air_cloud_3.png": {
+      "frame": {
+        "x": 2382,
+        "y": 2854,
+        "w": 266,
+        "h": 232
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 186,
+        "y": 83,
+        "w": 266,
+        "h": 232
+      },
+      "sourceSize": {
+        "w": 900,
+        "h": 480
+      }
+    },
+    "vfx/indicator/player_markers_3.png": {
+      "frame": {
+        "x": 2396,
+        "y": 2618,
+        "w": 460,
+        "h": 223
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 4,
+        "w": 460,
+        "h": 223
+      },
+      "sourceSize": {
+        "w": 480,
+        "h": 360
+      }
+    },
+    "vfx/contact/pushblock_shield_v3_white_3.png": {
+      "frame": {
+        "x": 2695,
+        "y": 932,
+        "w": 439,
+        "h": 704
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 31,
+        "y": 21,
+        "w": 439,
+        "h": 704
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "vfx/contact/pushblock_shield_v3_white_2.png": {
+      "frame": {
+        "x": 3136,
+        "y": 932,
+        "w": 288,
+        "h": 597
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 148,
+        "y": 73,
+        "w": 288,
+        "h": 597
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "vfx/contact/pushblock_shield_v3_blue_2.png": {
+      "frame": {
+        "x": 2453,
+        "y": 1067,
+        "w": 131,
+        "h": 651
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 416,
+        "y": 56,
+        "w": 131,
+        "h": 651
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "vfx/contact/block_shield_v3_5.png": {
+      "frame": {
+        "x": 3426,
+        "y": 932,
+        "w": 219,
+        "h": 675
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 774,
+        "y": 18,
+        "w": 219,
+        "h": 675
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "vfx/contact/block_shield_v3_4.png": {
+      "frame": {
+        "x": 3136,
+        "y": 1531,
+        "w": 282,
+        "h": 700
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 658,
+        "y": 16,
+        "w": 282,
+        "h": 700
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "vfx/contact/block_shield_v3_6.png": {
+      "frame": {
+        "x": 3647,
+        "y": 932,
+        "w": 169,
+        "h": 528
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 849,
+        "y": 157,
+        "w": 169,
+        "h": 528
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "vfx/contact/block_shield_v3_3.png": {
+      "frame": {
+        "x": 3420,
+        "y": 1609,
+        "w": 307,
+        "h": 693
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 509,
+        "y": 19,
+        "w": 307,
+        "h": 693
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "vfx/contact/block_shield_v3_2.png": {
+      "frame": {
+        "x": 2867,
+        "y": 1638,
+        "w": 258,
+        "h": 635
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 367,
+        "y": 58,
+        "w": 258,
+        "h": 635
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "vfx/contact/block_shield_v3_1.png": {
+      "frame": {
+        "x": 2858,
+        "y": 2618,
+        "w": 133,
+        "h": 421
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 364,
+        "y": 191,
+        "w": 133,
+        "h": 421
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "vfx/contact/block_shield_v3_4b.png": {
+      "frame": {
+        "x": 3127,
+        "y": 2233,
+        "w": 126,
+        "h": 575
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 676,
+        "y": 65,
+        "w": 126,
+        "h": 575
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "vfx/contact/block_shield_v3_3b.png": {
+      "frame": {
+        "x": 3255,
+        "y": 2304,
+        "w": 181,
+        "h": 627
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 472,
+        "y": 57,
+        "w": 181,
+        "h": 627
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 768
+      }
+    }
+  },
+  "meta": {
+    "app": "http://github.com/pixijs/assetpack",
+    "version": "1.0",
+    "image": "match_vfx-1.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 4096,
+      "h": 4096
+    },
+    "scale": 1,
+    "related_multi_packs": null
+  }
+}

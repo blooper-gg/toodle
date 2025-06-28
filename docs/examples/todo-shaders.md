@@ -1,5 +1,3 @@
-- white flash shader
-- color flash shader
 - outline shader
 - shader playground
 - custom shader with uniform buffer
