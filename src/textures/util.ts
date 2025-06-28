@@ -6,9 +6,14 @@ import type {
 } from "./types";
 
 export async function getBitmapFromUrl(url: URL): Promise<ImageBitmap> {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return await createImageBitmap(blob);
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return await createImageBitmap(blob);
+  } catch (e) {
+    console.error(`Failed to load texture from ${url.href}`, e);
+    throw e;
+  }
 }
 
 /**
