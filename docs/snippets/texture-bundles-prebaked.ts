@@ -9,7 +9,7 @@ const toodle = await Toodle.attach(canvas, {
 });
 
 // const baseUrl = window.location.href;
-const baseUrl = "http://localhost:5173";
+const baseUrl = "https://toodle.gg";
 const basePath = "/prebaked";
 await toodle.assets.registerBundle("match_vfx", {
   atlases: [
