@@ -8,6 +8,11 @@ export type AtlasCoords = TextureRegion & {
   atlasIndex: number;
 };
 
+/**
+ * A TextureRegion is a region of the texture atlas in normalized texels.
+ *
+ * It is a combination of a UvRegion and a drawOffset.
+ */
 export type TextureRegion = UvRegion & {
   /** the offset from the top left of the texture in texels to begin drawing */
   drawOffset: Vec2;
@@ -15,6 +20,9 @@ export type TextureRegion = UvRegion & {
   originalSize: Size;
 };
 
+/**
+ * A UvRegion is a region of the texture atlas in normalized texels.
+ */
 export type UvRegion = {
   /**
    * The offset of the UVs in normalized texels. Relative to the un-cropped texture.
@@ -42,11 +50,21 @@ export type UvRegion = {
   uvScaleCropped?: Size;
 };
 
+/**
+ * A CpuTextureAtlas is a texture atlas that has been loaded into memory.
+ *
+ * It contains the texture and a map of texture ids to TextureRegions.
+ */
 export type CpuTextureAtlas = {
   texture: ImageBitmap;
   textureRegions: Map<string, TextureRegion>;
 };
 
+/**
+ * A TextureWithMetadata is a texture that has been loaded into the gpu.
+ *
+ * It contains the gpu texture data and a drawOffset and originalSize for use with cropped textures.
+ */
 export type TextureWithMetadata = {
   texture: GPUTexture;
   /** draw offset from center in texel units */
@@ -117,6 +135,28 @@ export type AtlasBundleOpts = {
    * Whether the bundle should be loaded automatically on registration
    */
   autoLoad?: boolean;
+};
+
+/**
+ * A texel region defines a subregion of an individual texture in texel units.
+ *
+ * (0,0) is the top left corner of the original texture.
+ * (width, height) is the bottom right corner of the original texture.
+ *
+ * This is useful for something like spritesheet animations,
+ * for eg a 3-frame pose of a 32x32 character sprite might be 96x32texels, and the animation could
+ * be done by alternating between:
+ *
+ * { x: 0, y: 0, width: 32, height: 32 }
+ * { x: 32, y: 0, width: 32, height: 32 }
+ * { x: 64, y: 0, width: 32, height: 32 }
+ *
+ */
+export type TexelRegion = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 };
 
 /** A region specification from a pixi.js spritesheet or atlas paced with assetPack */
