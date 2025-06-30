@@ -143,8 +143,9 @@ export type AtlasBundleOpts = {
  * (0,0) is the top left corner of the original texture.
  * (width, height) is the bottom right corner of the original texture.
  *
+ * @example
  * This is useful for something like spritesheet animations,
- * for eg a 3-frame pose of a 32x32 character sprite might be 96x32texels, and the animation could
+ * for eg a 3-frame pose of a 32x32 character sprite might be 96x32 texels, and the animation could
  * be done by alternating between:
  *
  * { x: 0, y: 0, width: 32, height: 32 }
