@@ -1,7 +1,7 @@
 import { type Mat3, mat3 } from "wgpu-matrix";
 import type { Color } from "./coreTypes/Color";
 import type { Point } from "./coreTypes/Point";
-import { Size } from "./coreTypes/Size";
+import type { Size } from "./coreTypes/Size";
 import type { Limits, LimitsOptions } from "./limits";
 import { DEFAULT_LIMITS } from "./limits";
 import {
