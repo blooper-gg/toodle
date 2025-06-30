@@ -183,7 +183,7 @@ export class AssetManager {
 
     const coords: AtlasCoords = {
       uvOffset: { x: 0, y: 0 },
-      drawOffset: textureWrapper.drawOffset,
+      cropOffset: textureWrapper.cropOffset,
       uvScale: {
         width: textureWrapper.texture.width / this.textureAtlas.width,
         height: textureWrapper.texture.height / this.textureAtlas.height,
@@ -449,7 +449,7 @@ export class AssetManager {
         PixiRegion,
       ][]) {
         cpuTextureAtlas.textureRegions.set(assetId, {
-          drawOffset: {
+          cropOffset: {
             x: frame.spriteSourceSize.x,
             y: frame.spriteSourceSize.y,
           },
@@ -541,7 +541,7 @@ export class AssetManager {
           `Texture ${id} not found in atlas. Have you called toodle.loadTextures with this id or toodle.loadBundle with a bundle that contains it?`,
         );
       }
-      return texture[0].drawOffset;
+      return texture[0].cropOffset;
     },
 
     /**
@@ -640,7 +640,7 @@ export class AssetManager {
     );
     return {
       texture,
-      drawOffset: { x: 0, y: 0 },
+      cropOffset: { x: 0, y: 0 },
       originalSize: { width: texture.width, height: texture.height },
     };
   }

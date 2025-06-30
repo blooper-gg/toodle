@@ -15,6 +15,14 @@ const RESERVED_PRIMITIVE_INDEX_START = 1000;
 // this must match the circle index in the default fragment shader of quad.wgsl.ts
 const CIRCLE_INDEX = 1001;
 
+// a default region used for shapes
+const DEFAULT_REGION: TexelRegion = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+};
+
 /**
  * A node in the scene graph that renders a textured quad.
  *
@@ -24,14 +32,20 @@ const CIRCLE_INDEX = 1001;
 export class QuadNode extends SceneNode {
   #color: Color;
   #atlasCoords: AtlasCoords;
-  #region: TexelRegion | null;
+  #region: TexelRegion;
   #matrixPool: Pool<Mat3>;
   #flip: Vec2;
-  #drawOffset: Vec2;
+  /**
+   * The offset of the cropped texture from the original texture
+   * If uncropped, this will be 0,0
+   */
+  #cropOffset: Vec2;
   /**
    * The ratio of the cropped texture width and height to the original texture width and height
+   * If uncropped, this will be 1,1
    */
   #cropRatio: Size;
+  #atlasSize: Size;
 
   #textureId: TextureId;
   #writeInstance?: (array: Float32Array, offset: number) => void;
@@ -63,6 +77,8 @@ export class QuadNode extends SceneNode {
       options.atlasCoords.atlasIndex >= RESERVED_PRIMITIVE_INDEX_START
     ) {
       this.#textureId = PRIMITIVE_TEXTURE;
+      this.#region = DEFAULT_REGION;
+      this.#atlasSize = DEFAULT_REGION;
     } else {
       assert(
         options.textureId,
@@ -75,13 +91,19 @@ export class QuadNode extends SceneNode {
         "QuadNode requires a region to be explicitly provided",
       );
       this.#region = options.region;
+
+      assert(
+        options.atlasSize,
+        "QuadNode requires atlas size to be explicitly provided",
+      );
+      this.#atlasSize = options.atlasSize;
     }
 
     this.#atlasCoords = options.atlasCoords;
     this.#color = options.color ?? { r: 1, g: 1, b: 1, a: 1 };
     this.#matrixPool = matrixPool;
     this.#flip = { x: options.flipX ? -1 : 1, y: options.flipY ? -1 : 1 };
-    this.#drawOffset = options.drawOffset ?? { x: 0, y: 0 };
+    this.#cropOffset = options.cropOffset ?? { x: 0, y: 0 };
     this.#cropRatio = !this.#atlasCoords.uvScaleCropped
       ? { width: 1, height: 1 }
       : {
@@ -203,16 +225,16 @@ export class QuadNode extends SceneNode {
    * The drawing offset of the texture.
    * This can be used to offset the texture from the origin of the quad.
    */
-  get drawOffset(): Vec2 {
-    return this.#drawOffset;
+  get cropOffset(): Vec2 {
+    return this.#cropOffset;
   }
 
   /**
    * The drawing offset of the texture.
    * This can be used to offset the texture from the origin of the quad.
    */
-  set drawOffset(value: Vec2) {
-    this.#drawOffset = value;
+  set cropOffset(value: Vec2) {
+    this.#cropOffset = value;
   }
 
   get textureId() {
@@ -247,11 +269,16 @@ export class QuadNode extends SceneNode {
      * Returns the crop ratio for the quad. This is the relative difference in size
      * between the cropped and uncropped texture, and will be 1 if the quad has no transparent pixels
      * or if it is loaded without cropping..
-     *
-     *
      */
     cropRatio: () => {
       return this.#cropRatio;
+    },
+
+    /**
+     * Returns the size of the texture atlas in texels, by default this is 4096x4096
+     */
+    atlasSize: () => {
+      return this.#atlasSize;
     },
   };
 }
@@ -274,7 +301,6 @@ export type QuadOptions = NodeOptions & {
   shader?: IShader;
   writeInstance?: (array: Float32Array, offset: number) => void;
   color?: Color;
-  matrixPool?: Pool<Mat3>;
   /**
    * flipX mirrors the image horizontally (equivalent to a scale.x multiplication
    * by -1) but allows for independent scaling
@@ -286,9 +312,21 @@ export type QuadOptions = NodeOptions & {
    */
   flipY?: boolean;
   /**
-   * Draw offset applied to the Quad when it is rendered
+   * The offset of the cropped texture from the original texture
+   * If uncropped, this will be 0,0
    */
-  drawOffset?: Vec2;
+  cropOffset?: Vec2;
+
+  /**
+   * The size of the texture atlas in texels. This is almost always set by toodle.
+   */
+  atlasSize?: Size;
+
+  /**
+   * The matrix pool to use for the quad.
+   * This is used to avoid creating new matrices for each quad.
+   */
+  matrixPool?: Pool<Mat3>;
 };
 
 function writeQuadInstance(
@@ -308,23 +346,24 @@ function writeQuadInstance(
   );
 
   const region = node.region;
-  if (region) {
-    array.set(
-      [
-        node.atlasCoords.uvOffset.x + region.x / 4096,
-        node.atlasCoords.uvOffset.y + region.y / 4096,
-        region.width / 4096,
-        region.height / 4096,
-      ],
-      offset + 16,
-    );
-  } else {
+  if (node.textureId === PRIMITIVE_TEXTURE) {
     array.set(
       [
         node.atlasCoords.uvOffset.x,
         node.atlasCoords.uvOffset.y,
         node.atlasCoords.uvScale.width,
         node.atlasCoords.uvScale.height,
+      ],
+      offset + 16,
+    );
+  } else {
+    const atlasSize = node.extra.atlasSize();
+    array.set(
+      [
+        node.atlasCoords.uvOffset.x + region.x / atlasSize.width,
+        node.atlasCoords.uvOffset.y + region.y / atlasSize.height,
+        region.width / atlasSize.width,
+        region.height / atlasSize.height,
       ],
       offset + 16,
     );
@@ -337,8 +376,8 @@ function writeQuadInstance(
       // we divide by 2 because we want the center of the remaining region and not the full shift.
       // for example, if we crop the leftmost 90px of a 100px wide texture
       // we want the offset to be 45px and not 90px
-      node.drawOffset.x / 2 / (node.atlasCoords.originalSize.width || 1),
-      node.drawOffset.y / 2 / (node.atlasCoords.originalSize.height || 1),
+      node.cropOffset.x / 2 / (node.atlasCoords.originalSize.width || 1),
+      node.cropOffset.y / 2 / (node.atlasCoords.originalSize.height || 1),
       node.extra.cropRatio().width,
       node.extra.cropRatio().height,
     ],

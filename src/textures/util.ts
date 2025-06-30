@@ -120,7 +120,7 @@ export async function packBitmapsToAtlas(
 
   let atlasRegionMap = new Map<string, TextureRegion>();
 
-  for (const [id, { texture, drawOffset: offset, originalSize }] of images) {
+  for (const [id, { texture, cropOffset: offset, originalSize }] of images) {
     // Find best fitting space using guillotine method
     let bestSpace = -1;
     let bestScore = Number.POSITIVE_INFINITY;
@@ -211,7 +211,7 @@ export async function packBitmapsToAtlas(
         width: texture.width / textureSize,
         height: texture.height / textureSize,
       },
-      drawOffset: offset,
+      cropOffset: offset,
       originalSize,
     });
   }

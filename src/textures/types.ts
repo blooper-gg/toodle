@@ -11,11 +11,11 @@ export type AtlasCoords = TextureRegion & {
 /**
  * A TextureRegion is a region of the texture atlas in normalized texels.
  *
- * It is a combination of a UvRegion and a drawOffset.
+ * It is a combination of a UvRegion and a cropOffset.
  */
 export type TextureRegion = UvRegion & {
   /** the offset from the top left of the texture in texels to begin drawing */
-  drawOffset: Vec2;
+  cropOffset: Vec2;
   /** the original size of the texture in texels */
   originalSize: Size;
 };
@@ -63,12 +63,12 @@ export type CpuTextureAtlas = {
 /**
  * A TextureWithMetadata is a texture that has been loaded into the gpu.
  *
- * It contains the gpu texture data and a drawOffset and originalSize for use with cropped textures.
+ * It contains the gpu texture data and a cropOffset and originalSize for use with cropped textures.
  */
 export type TextureWithMetadata = {
   texture: GPUTexture;
-  /** draw offset from center in texel units */
-  drawOffset: Vec2;
+  /** crop offset from center in texel units */
+  cropOffset: Vec2;
   /** original size in texel units before cropping */
   originalSize: Size;
 };
