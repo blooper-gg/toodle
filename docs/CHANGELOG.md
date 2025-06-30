@@ -4,6 +4,10 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://github.com/blooper-gg/toodle/pkgs/npm/toodle/versions)
 
+## [0.0.85 and 0.0.86](https://github.com/blooper-gg/toodle/releases/tag/0.0.86)
+
+(administrative, no changes)
+
 ## [0.0.84](https://github.com/blooper-gg/toodle/releases/tag/0.0.84)
 
 - Add `QuadNode.region` to allow rendering a subregion of a texture (useful for spritesheets / tilemaps), see [texel region example](https://toodle.gg/examples/sprite-region.html) for more details.
