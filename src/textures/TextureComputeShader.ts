@@ -1,4 +1,3 @@
-import type { Vec2 } from "../coreTypes/Vec2";
 import computeShader from "./pixel-scraping.wgsl";
 import type { TextureWithMetadata } from "./types";
 
@@ -132,7 +131,7 @@ export class TextureComputeShader {
 
     textureWrapper = {
       texture: croppedTexture,
-      drawOffset: { x: leftCrop - rightCrop, y: bottomCrop - topCrop },
+      cropOffset: { x: leftCrop - rightCrop, y: bottomCrop - topCrop },
       originalSize: textureWrapper.originalSize,
     };
 
@@ -256,7 +255,7 @@ export class TextureComputeShader {
 
     return {
       texture: placeholder,
-      drawOffset: { x: 0, y: 0 },
+      cropOffset: { x: 0, y: 0 },
       originalSize: { width: inputTexture.width, height: inputTexture.height },
     };
   }

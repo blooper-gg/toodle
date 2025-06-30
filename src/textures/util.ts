@@ -6,9 +6,14 @@ import type {
 } from "./types";
 
 export async function getBitmapFromUrl(url: URL): Promise<ImageBitmap> {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return await createImageBitmap(blob);
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return await createImageBitmap(blob);
+  } catch (e) {
+    console.error(`Failed to load texture from ${url.href}`, e);
+    throw e;
+  }
 }
 
 /**
@@ -115,7 +120,7 @@ export async function packBitmapsToAtlas(
 
   let atlasRegionMap = new Map<string, TextureRegion>();
 
-  for (const [id, { texture, drawOffset: offset, originalSize }] of images) {
+  for (const [id, { texture, cropOffset: offset, originalSize }] of images) {
     // Find best fitting space using guillotine method
     let bestSpace = -1;
     let bestScore = Number.POSITIVE_INFINITY;
@@ -206,7 +211,7 @@ export async function packBitmapsToAtlas(
         width: texture.width / textureSize,
         height: texture.height / textureSize,
       },
-      drawOffset: offset,
+      cropOffset: offset,
       originalSize,
     });
   }

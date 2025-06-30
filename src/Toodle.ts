@@ -1,9 +1,9 @@
 import { type Mat3, mat3 } from "wgpu-matrix";
 import type { Color } from "./coreTypes/Color";
 import type { Point } from "./coreTypes/Point";
-import type { Limits } from "./limits";
+import type { Size } from "./coreTypes/Size";
+import type { Limits, LimitsOptions } from "./limits";
 import { DEFAULT_LIMITS } from "./limits";
-import type { LimitsOptions } from "./limits";
 import {
   convertScreenToWorld,
   convertWorldToScreen,
@@ -70,6 +70,7 @@ export class Toodle {
   #encoder?: GPUCommandEncoder;
   #defaultFilter: GPUFilterMode;
   #matrixPool: Pool<Mat3>;
+  #atlasSize: Size;
 
   /**
    * it's unlikely that you want to use the constructor directly.
@@ -96,7 +97,10 @@ export class Toodle {
     this.#presentationFormat = presentationFormat;
     this.#defaultFilter = options.filter ?? "linear";
     this.assets = new AssetManager(device, presentationFormat, this.#limits);
-
+    this.#atlasSize = {
+      width: this.assets.textureAtlas.width,
+      height: this.assets.textureAtlas.height,
+    };
     this.debug = { device, presentationFormat };
     this.#engineUniform = {
       resolution,
@@ -430,7 +434,14 @@ export class Toodle {
     options.shader ??= this.#defaultQuadShader();
     options.atlasCoords ??= this.assets.extra.getAtlasCoords(assetId)[0];
     options.textureId ??= assetId;
-    options.drawOffset ??= this.assets.extra.getTextureOffset(assetId);
+    options.cropOffset ??= this.assets.extra.getTextureOffset(assetId);
+    options.atlasSize = this.#atlasSize;
+    options.region ??= {
+      x: 0,
+      y: 0,
+      width: options.atlasCoords.uvScale.width * this.#atlasSize.width,
+      height: options.atlasCoords.uvScale.height * this.#atlasSize.height,
+    };
 
     const quad = new QuadNode(options, this.#matrixPool);
     return quad;
@@ -464,7 +475,7 @@ export class Toodle {
         atlasIndex: 1000,
         uvOffset: { x: 0, y: 0 },
         uvScale: { width: 0, height: 0 },
-        drawOffset: { x: 0, y: 0 },
+        cropOffset: { x: 0, y: 0 },
         originalSize: { width: 1, height: 1 },
       };
 
@@ -492,7 +503,7 @@ export class Toodle {
         atlasIndex: 1001,
         uvOffset: { x: 0, y: 0 },
         uvScale: { width: 0, height: 0 },
-        drawOffset: { x: 0, y: 0 },
+        cropOffset: { x: 0, y: 0 },
         originalSize: { width: 1, height: 1 },
       };
 
@@ -534,7 +545,7 @@ export class Toodle {
             atlasIndex: 1000,
             uvOffset: { x: 0, y: 0 },
             uvScale: { width: 0, height: 0 },
-            drawOffset: { x: 0, y: 0 },
+            cropOffset: { x: 0, y: 0 },
             originalSize: { width: 1, height: 1 },
           },
           shader: options.shader ?? this.#defaultQuadShader(),

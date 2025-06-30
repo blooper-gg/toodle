@@ -4,6 +4,12 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://github.com/blooper-gg/toodle/pkgs/npm/toodle/versions)
 
+## [0.0.84](https://github.com/blooper-gg/toodle/releases/tag/0.0.84)
+
+- Add `QuadNode.region` to allow rendering a subregion of a texture (useful for spritesheets / tilemaps), see [texel region example](https://toodle.gg/examples/sprite-region.html) for more details.
+- **Breaking**: rename `QuadNode.drawOffset` to `QuadNode.cropOffset` to avoid confusion with region offset for spritesheets
+- Add `QuadNode.extra.atlasSize` to get the size of the texture atlas in texels (usually 4096x4096). These dimensions are more commonly available in the `toodle.limits` object.
+
 ## [0.0.83](https://github.com/blooper-gg/toodle/releases/tag/0.0.83)
 
 - Allow registering bundles with pre-baked texture atlases, see [pre-baking atlases](https://toodle.gg/examples/texture-bundles-prebaked.html) for more details.

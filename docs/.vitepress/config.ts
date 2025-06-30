@@ -34,6 +34,7 @@ export default defineConfig({
           { text: "Size and Scale", link: "/examples/quad-size-scale" },
           { text: "Flip X and Flip Y", link: "/examples/flipxy" },
           { text: "Layers", link: "/examples/layer" },
+          { text: "Animated Sprites", link: "/examples/sprite-region" },
         ],
       },
       {

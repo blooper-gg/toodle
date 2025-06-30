@@ -34,7 +34,7 @@ const offsetQuad = toodle.Quad("offsetTest", {
     x: 0,
     y: 0,
   },
-  drawOffset: {
+  cropOffset: {
     x: 0,
     y: 0,
   },
