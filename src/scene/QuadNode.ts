@@ -5,7 +5,7 @@ import type { Size } from "../coreTypes/Size";
 import type { Vec2 } from "../coreTypes/Vec2";
 import type { IShader } from "../shaders/IShader";
 import type { TextureId } from "../textures/AssetManager";
-import type { AtlasCoords } from "../textures/types";
+import type { AtlasCoords, TexelRegion } from "../textures/types";
 import { assert } from "../utils/assert";
 import type { Pool } from "../utils/pool";
 import { type NodeOptions, SceneNode } from "./SceneNode";
@@ -24,6 +24,7 @@ const CIRCLE_INDEX = 1001;
 export class QuadNode extends SceneNode {
   #color: Color;
   #atlasCoords: AtlasCoords;
+  #region: TexelRegion | null;
   #matrixPool: Pool<Mat3>;
   #flip: Vec2;
   #drawOffset: Vec2;
@@ -68,6 +69,12 @@ export class QuadNode extends SceneNode {
         "QuadNode requires texture id to be explicitly provided",
       );
       this.#textureId = options.textureId;
+
+      assert(
+        options.region,
+        "QuadNode requires a region to be explicitly provided",
+      );
+      this.#region = options.region;
     }
 
     this.#atlasCoords = options.atlasCoords;
@@ -131,10 +138,19 @@ export class QuadNode extends SceneNode {
 
   /**
    * The atlas coordinates for the quad. These determine the region in the texture atlas
-   * that is sampled for rendering.
+   * that is sampled for rendering in normalized uv space.
    */
   get atlasCoords() {
     return this.#atlasCoords;
+  }
+
+  /**
+   * A subregion of the texture to render.
+   * This is useful for rendering a single sprite from a spritesheet for instance.
+   * It defaults to the full texture.
+   */
+  get region() {
+    return this.#region;
   }
 
   get writeInstance() {
@@ -242,7 +258,19 @@ export class QuadNode extends SceneNode {
 
 export type QuadOptions = NodeOptions & {
   textureId?: TextureId;
+  /**
+   * A subregion of the texture to render.
+   * This is useful for rendering a single sprite from a spritesheet for instance.
+   * It defaults to the full texture.
+   */
+  region?: TexelRegion;
+  /**
+   * Atlas coordinates are almost always set by toodle and the asset manager.
+   * For advanced use cases, you can set these yourself to control what uvs are sampled
+   * from the texture atlas.
+   */
   atlasCoords?: AtlasCoords;
+
   shader?: IShader;
   writeInstance?: (array: Float32Array, offset: number) => void;
   color?: Color;
@@ -278,15 +306,29 @@ function writeQuadInstance(
     [node.color.r, node.color.g, node.color.b, node.color.a],
     offset + 12,
   );
-  array.set(
-    [
-      node.atlasCoords.uvOffset.x,
-      node.atlasCoords.uvOffset.y,
-      node.atlasCoords.uvScale.width,
-      node.atlasCoords.uvScale.height,
-    ],
-    offset + 16,
-  );
+
+  const region = node.region;
+  if (region) {
+    array.set(
+      [
+        node.atlasCoords.uvOffset.x + region.x / 4096,
+        node.atlasCoords.uvOffset.y + region.y / 4096,
+        region.width / 4096,
+        region.height / 4096,
+      ],
+      offset + 16,
+    );
+  } else {
+    array.set(
+      [
+        node.atlasCoords.uvOffset.x,
+        node.atlasCoords.uvOffset.y,
+        node.atlasCoords.uvScale.width,
+        node.atlasCoords.uvScale.height,
+      ],
+      offset + 16,
+    );
+  }
 
   array.set(
     [

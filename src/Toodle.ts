@@ -1,9 +1,8 @@
 import { type Mat3, mat3 } from "wgpu-matrix";
 import type { Color } from "./coreTypes/Color";
 import type { Point } from "./coreTypes/Point";
-import type { Limits } from "./limits";
+import type { Limits, LimitsOptions } from "./limits";
 import { DEFAULT_LIMITS } from "./limits";
-import type { LimitsOptions } from "./limits";
 import {
   convertScreenToWorld,
   convertWorldToScreen,
@@ -432,6 +431,8 @@ export class Toodle {
     options.textureId ??= assetId;
     options.drawOffset ??= this.assets.extra.getTextureOffset(assetId);
 
+    console.trace(options.region);
+
     const quad = new QuadNode(options, this.#matrixPool);
     return quad;
   }
@@ -467,6 +468,12 @@ export class Toodle {
         drawOffset: { x: 0, y: 0 },
         originalSize: { width: 1, height: 1 },
       };
+      options.region ??= {
+        x: 0,
+        y: 0,
+        width: options.idealSize.width,
+        height: options.idealSize.height,
+      };
 
       const quad = new QuadNode(options, this.#matrixPool);
 
@@ -494,6 +501,12 @@ export class Toodle {
         uvScale: { width: 0, height: 0 },
         drawOffset: { x: 0, y: 0 },
         originalSize: { width: 1, height: 1 },
+      };
+      options.region ??= {
+        x: 0,
+        y: 0,
+        width: options.idealSize.width,
+        height: options.idealSize.height,
       };
 
       const quad = new QuadNode(options, this.#matrixPool);
