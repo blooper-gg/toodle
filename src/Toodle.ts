@@ -435,6 +435,7 @@ export class Toodle {
     options.atlasCoords ??= this.assets.extra.getAtlasCoords(assetId)[0];
     options.textureId ??= assetId;
     options.cropOffset ??= this.assets.extra.getTextureOffset(assetId);
+
     options.atlasSize = this.#atlasSize;
     options.region ??= {
       x: 0,

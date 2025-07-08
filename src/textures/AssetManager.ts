@@ -448,10 +448,21 @@ export class AssetManager {
         string,
         PixiRegion,
       ][]) {
+        const leftCrop = frame.spriteSourceSize.x;
+        const rightCrop =
+          frame.sourceSize.w -
+          frame.spriteSourceSize.x -
+          frame.spriteSourceSize.w;
+        const topCrop = frame.spriteSourceSize.y;
+        const bottomCrop =
+          frame.sourceSize.h -
+          frame.spriteSourceSize.y -
+          frame.spriteSourceSize.h;
+
         cpuTextureAtlas.textureRegions.set(assetId, {
           cropOffset: {
-            x: frame.spriteSourceSize.x,
-            y: frame.spriteSourceSize.y,
+            x: leftCrop - rightCrop,
+            y: bottomCrop - topCrop,
           },
           originalSize: {
             width: frame.sourceSize.w,
@@ -462,6 +473,10 @@ export class AssetManager {
             y: frame.frame.y / bitmap.height,
           },
           uvScale: {
+            width: frame.sourceSize.w / bitmap.width,
+            height: frame.sourceSize.h / bitmap.height,
+          },
+          uvScaleCropped: {
             width: frame.frame.w / bitmap.width,
             height: frame.frame.h / bitmap.height,
           },

@@ -4,6 +4,10 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://github.com/blooper-gg/toodle/pkgs/npm/toodle/versions)
 
+## [0.0.87](https://github.com/blooper-gg/toodle/releases/tag/0.0.87)
+
+- Fix: Bundles loaded via pixi prebaked atlases now have the `cropOffset` calculated correctly
+
 ## [0.0.85 and 0.0.86](https://github.com/blooper-gg/toodle/releases/tag/0.0.86)
 
 (administrative, no changes)

@@ -162,9 +162,12 @@ export type TexelRegion = {
 
 /** A region specification from a pixi.js spritesheet or atlas paced with assetPack */
 export type PixiRegion = {
+  /** the position and size of the cropped region in the atlas, measured in texels*/
   frame: { x: number; y: number; w: number; h: number };
   rotated: boolean;
   trimmed: boolean;
+  /** the original size of the texture in texels */
   sourceSize: { w: number; h: number };
+  /** the position and size of the cropped region of the texture prior to packing in the atlas, measured in texels */
   spriteSourceSize: { x: number; y: number; w: number; h: number };
 };
