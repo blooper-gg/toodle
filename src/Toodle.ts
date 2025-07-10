@@ -9,6 +9,7 @@ import {
   convertWorldToScreen,
   createProjectionMatrix,
 } from "./math/matrix";
+import { postProcess } from "./postprocess";
 import { Batcher } from "./scene/Batcher";
 import { Camera } from "./scene/Camera";
 import { QuadNode, type QuadOptions } from "./scene/QuadNode";
@@ -68,6 +69,7 @@ export class Toodle {
   #presentationFormat: GPUTextureFormat;
   #renderPass?: GPURenderPassEncoder;
   #encoder?: GPUCommandEncoder;
+  #pingpong: [GPUTexture, GPUTexture];
   #defaultFilter: GPUFilterMode;
   #matrixPool: Pool<Mat3>;
   #atlasSize: Size;
@@ -110,6 +112,27 @@ export class Toodle {
     this.#resolution = resolution;
 
     this.resize(this.#resolution);
+
+    this.#pingpong = [
+      this.#device.createTexture({
+        size: {
+          width: resolution.width,
+          height: resolution.height,
+        },
+        format: presentationFormat,
+        usage:
+          GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.RENDER_ATTACHMENT,
+      }),
+      this.#device.createTexture({
+        size: {
+          width: resolution.width,
+          height: resolution.height,
+        },
+        format: presentationFormat,
+        usage:
+          GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.RENDER_ATTACHMENT,
+      }),
+    ];
 
     this.#resizeObserver = this.#createResizeObserver(canvas);
   }
@@ -250,7 +273,7 @@ export class Toodle {
       label: `toodle frame ${this.diagnostics.frames}`,
       colorAttachments: [
         {
-          view: this.#context.getCurrentTexture().createView(),
+          view: this.#pingpong[0].createView(),
           clearValue: this.clearColor,
           loadOp: options?.loadOp ?? "clear",
           storeOp: "store",
@@ -331,6 +354,16 @@ export class Toodle {
     }
 
     this.#renderPass.end();
+
+    postProcess(
+      this.#encoder,
+      this.#context,
+      this.#device,
+      this.clearColor,
+      this.#presentationFormat,
+      this.#pingpong,
+    );
+
     this.#device.queue.submit([this.#encoder.finish()]);
     this.#batcher.flush();
     this.#matrixPool.free();
