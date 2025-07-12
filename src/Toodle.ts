@@ -116,8 +116,8 @@ export class Toodle {
     this.#pingpong = [
       this.#device.createTexture({
         size: {
-          width: resolution.width,
-          height: resolution.height,
+          width: resolution.width * window.devicePixelRatio,
+          height: resolution.height * window.devicePixelRatio,
         },
         format: presentationFormat,
         usage:
@@ -125,8 +125,8 @@ export class Toodle {
       }),
       this.#device.createTexture({
         size: {
-          width: resolution.width,
-          height: resolution.height,
+          width: resolution.width * window.devicePixelRatio,
+          height: resolution.height * window.devicePixelRatio,
         },
         format: presentationFormat,
         usage:
