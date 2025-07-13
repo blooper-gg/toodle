@@ -7,7 +7,7 @@ const toodle = await Toodle.attach(canvas, { filter: "linear" });
 
 await toodle.assets.loadTexture(
   "mew",
-  new URL("/prebaked/match_vfx-0.png", import.meta.url),
+  new URL("/img/MewTransparentExample.png", import.meta.url),
 );
 
 const mouse = { x: 0, y: 0 };
@@ -26,7 +26,11 @@ const shader = toodle.QuadShader(
     let color = default_fragment_shader(vertex, linearSampler);
 
     let isTransparent = step(0.01, color.a);
-    return vec4f(color.rgb * isTransparent, color.a);
+    let original_uv = vertex.engine_uv.zw;
+    let centerDistance = distance(vec2f(0.5, 0.5), original_uv);
+    let light = 1. - centerDistance;
+
+    return vec4f(color.rgb * light * isTransparent, color.a);
   }
 `,
   {
@@ -49,7 +53,11 @@ toodle.clearColor = { r: 0, g: 0, b: 0, a: 1 };
 
 function draw() {
   toodle.startFrame();
-  toodle.draw(toodle.Quad("mew", { scale: 0.1 }));
+  toodle.draw(
+    toodle.Quad("mew", {
+      color: { r: 0.2, g: 0.2, b: 0.2, a: 1 },
+    }),
+  );
   toodle.draw(
     toodle.shapes.Circle({
       idealSize: { width: 100, height: 100 },
