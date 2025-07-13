@@ -47,7 +47,7 @@ export function postProcess(
       shader = colorInversion(device, presentationFormat, pingpong);
       break;
     default:
-      shader = colorInversion(device, presentationFormat, pingpong);
+      shader = none(device, presentationFormat, pingpong);
       break;
   }
 
@@ -67,6 +67,89 @@ type PostProcess = {
   pipeline: GPURenderPipeline;
   bindGroups: GPUBindGroup[];
 };
+
+export function none(
+  device: GPUDevice,
+  presentationFormat: GPUTextureFormat,
+  pingpong: [GPUTexture, GPUTexture],
+): PostProcess {
+  const pipeline = device.createRenderPipeline({
+    label: "toodle post process - no action",
+    layout: "auto",
+
+    primitive: {
+      topology: "triangle-strip",
+    },
+
+    vertex: {
+      buffers: [
+        {
+          arrayStride: 4 * 4,
+          attributes: [
+            { shaderLocation: 0, offset: 0, format: "float32x2" }, // position
+            { shaderLocation: 1, offset: 0, format: "float32x2" }, // uv
+          ],
+        },
+      ],
+      module: defaultVertexShader(device),
+    },
+    fragment: {
+      targets: [{ format: presentationFormat }],
+      module: device.createShaderModule({
+        label: "toodle post process fragment shader",
+        code: /*wgsl*/ `
+@group(0) @binding(0) var inputTex: texture_2d<f32>;
+@group(0) @binding(1) var inputSampler: sampler;
+@group(0) @binding(2) var<uniform> engineUniform: EngineUniform;
+
+struct EngineUniform {
+  // resolution of the canvas in physical pixels
+  resolution: vec2f,
+  random: f32,
+  time: f32,
+};
+
+
+@fragment
+fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
+  let color = textureSample(inputTex, inputSampler, uv);
+  // prevent optimization of bind group
+  let _nope = engineUniform.time;
+  return color;
+}
+  `,
+      }),
+    },
+  });
+
+  const engineUniform = device.createBuffer({
+    size: 16,
+    usage: GPUBufferUsage.UNIFORM,
+    mappedAtCreation: true,
+  });
+
+  const engineUniformData = new Float32Array(engineUniform.getMappedRange());
+  engineUniformData[0] = pingpong[0].width;
+  engineUniformData[1] = pingpong[0].height;
+  engineUniformData[2] = Math.random();
+  engineUniformData[3] = performance.now() / 1000;
+  engineUniform.unmap();
+
+  const bindGroup = device.createBindGroup({
+    label: "toodle post process bind group",
+    layout: pipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: pingpong[0].createView() },
+      { binding: 1, resource: defaultSampler(device) },
+      { binding: 2, resource: engineUniform },
+    ],
+  });
+
+  return {
+    pipeline,
+    bindGroups: [bindGroup],
+  };
+}
 
 export function crtScanLines(
   device: GPUDevice,
