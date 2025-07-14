@@ -4,6 +4,10 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://github.com/blooper-gg/toodle/pkgs/npm/toodle/versions)
 
+## [0.0.88](https://github.com/blooper-gg/toodle/releases/tag/0.0.88)
+
+- Error handling: Throw `ToodleInstanceCap` error when too many instances are enqueued for a shader instead of returning an offset out of bounds error.
+
 ## [0.0.87](https://github.com/blooper-gg/toodle/releases/tag/0.0.87)
 
 - Fix: Bundles loaded via pixi prebaked atlases now have the `cropOffset` calculated correctly

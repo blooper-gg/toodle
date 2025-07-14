@@ -30,6 +30,7 @@ export class QuadShader implements IShader {
   #uniformValues: StructuredView;
   #instanceData: InstanceData;
   #instanceIndex = 0;
+  #instanceCount;
 
   #device: GPUDevice;
   #pipeline: GPURenderPipeline;
@@ -56,6 +57,12 @@ export class QuadShader implements IShader {
   processBatch(renderPass: GPURenderPassEncoder, nodes: SceneNode[]) {
     renderPass.setPipeline(this.#pipeline);
     const batchStartInstanceIndex = this.#instanceIndex;
+
+    if (nodes.length > this.#instanceCount) {
+      throw new Error(
+        `ToodleInstanceCap: ${nodes.length} instances enqueued, max is ${this.#instanceCount} for ${this.label} shader`,
+      );
+    }
 
     for (let i = 0; i < nodes.length; i++) {
       if (!this.#instanceData) {
@@ -217,6 +224,8 @@ export class QuadShader implements IShader {
       textureAtlas,
       this.#uniformBuffer,
     );
+
+    this.#instanceCount = instanceCount;
   }
 }
 
