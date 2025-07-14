@@ -5,6 +5,13 @@ const canvas = createCanvas(window.innerWidth, window.innerHeight);
 
 const toodle = await Toodle.attach(canvas, { filter: "linear" });
 
+const htmlSelect = document.createElement("select") as HTMLSelectElement;
+htmlSelect.innerHTML = `
+  <option value="add" selected>Add</option>
+  <option value="subtract">Subtract</option>
+`;
+document.body.appendChild(htmlSelect);
+
 await toodle.assets.loadTexture(
   "mew",
   new URL("/img/MewTransparentExample.png", import.meta.url),
@@ -17,35 +24,14 @@ canvas.addEventListener("mousemove", (e) => {
   mouse.y = e.offsetY;
 });
 
-const shader = toodle.QuadShader(
-  "additive blend",
-  1,
-  /*wgsl*/ `
-  @fragment
-  fn frag(vertex: VertexOutput) -> @location(0) vec4f {
-    let color = default_fragment_shader(vertex, linearSampler);
+let shader = makeLightingShader("add");
 
-    let isTransparent = step(0.01, color.a);
-    let original_uv = vertex.engine_uv.zw;
-    let centerDistance = distance(vec2f(0.5, 0.5), original_uv);
-    let light = 1. - centerDistance;
-
-    return vec4f(color.rgb * light * isTransparent, color.a);
+htmlSelect.addEventListener("change", (e) => {
+  if (e.target instanceof HTMLSelectElement) {
+    const blendMode = e.target.value as GPUBlendOperation;
+    shader = makeLightingShader(blendMode);
   }
-`,
-  {
-    color: {
-      srcFactor: "one",
-      dstFactor: "one",
-      operation: "add",
-    },
-    alpha: {
-      srcFactor: "one",
-      dstFactor: "one",
-      operation: "add",
-    },
-  },
-);
+});
 
 canvas.style.cursor = "none";
 
@@ -69,6 +55,38 @@ function draw() {
 
   toodle.endFrame();
   requestAnimationFrame(draw);
+}
+
+function makeLightingShader(blendOperation: GPUBlendOperation) {
+  return toodle.QuadShader(
+    "additive blend",
+    1,
+    /*wgsl*/ `
+    @fragment
+    fn frag(vertex: VertexOutput) -> @location(0) vec4f {
+      let color = default_fragment_shader(vertex, linearSampler);
+
+      let isTransparent = step(0.01, color.a);
+      let original_uv = vertex.engine_uv.zw;
+      let centerDistance = distance(vec2f(0.5, 0.5), original_uv);
+      let light = 1. - centerDistance;
+
+      return vec4f(color.rgb * light * isTransparent, color.a);
+    }
+  `,
+    {
+      color: {
+        srcFactor: "one",
+        dstFactor: "one",
+        operation: blendOperation,
+      },
+      alpha: {
+        srcFactor: "one",
+        dstFactor: "one",
+        operation: blendOperation,
+      },
+    },
+  );
 }
 
 draw();

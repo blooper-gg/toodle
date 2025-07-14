@@ -1,4 +1,4 @@
-import type { Color } from "./coreTypes/Color";
+import type { Color } from "../../coreTypes/Color";
 
 export function postProcess(
   encoder: GPUCommandEncoder,
@@ -36,10 +36,13 @@ export function postProcess(
   new Float32Array(fullscreenVB.getMappedRange()).set(fullscreenQuadVerts);
   fullscreenVB.unmap();
 
-  let shader: PostProcess | null = null;
+  let shader: ScreenShaderDefinition | null = null;
 
   const params = new URLSearchParams(window.location.search);
   switch (params.get("postprocess")) {
+    case "blur":
+      shader = blur(device, presentationFormat, pingpong);
+      break;
     case "crtScanLines":
       shader = crtScanLines(device, presentationFormat, pingpong);
       break;
@@ -63,16 +66,94 @@ export function postProcess(
   postProcess.end();
 }
 
-type PostProcess = {
-  pipeline: GPURenderPipeline;
-  bindGroups: GPUBindGroup[];
+function blur(
+  device: GPUDevice,
+  presentationFormat: GPUTextureFormat,
+  pingpong: [GPUTexture, GPUTexture],
+): ScreenShaderDefinition {
+  const pipeline = device.createRenderPipeline({
+    label: "toodle post process - no action",
+    layout: "auto",
+
+    primitive: {
+      topology: "triangle-strip",
+    },
+
+    vertex: {
+      buffers: [
+        {
+          arrayStride: 4 * 4,
+          attributes: [
+            { shaderLocation: 0, offset: 0, format: "float32x2" }, // position
+            { shaderLocation: 1, offset: 0, format: "float32x2" }, // uv
+          ],
+        },
+      ],
+      module: defaultVertexShader(device),
+    },
+    fragment: {
+      targets: [{ format: presentationFormat }],
+      module: device.createShaderModule({
+        label: "toodle post process fragment shader",
+        code: /*wgsl*/ `
+@group(0) @binding(0) var inputTex: texture_2d<f32>;
+@group(0) @binding(1) var inputSampler: sampler;
+@group(0) @binding(2) var<uniform> engineUniform: EngineUniform;
+
+struct EngineUniform {
+  // resolution of the canvas in physical pixels
+  resolution: vec2f,
+  random: f32,
+  time: f32,
 };
+
+
+@fragment
+fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
+  let color = textureSample(inputTex, inputSampler, uv);
+  // prevent optimization of bind group
+  let _nope = engineUniform.time;
+  return color;
+}
+  `,
+      }),
+    },
+  });
+
+  const engineUniform = device.createBuffer({
+    size: 16,
+    usage: GPUBufferUsage.UNIFORM,
+    mappedAtCreation: true,
+  });
+
+  const engineUniformData = new Float32Array(engineUniform.getMappedRange());
+  engineUniformData[0] = pingpong[0].width;
+  engineUniformData[1] = pingpong[0].height;
+  engineUniformData[2] = Math.random();
+  engineUniformData[3] = performance.now() / 1000;
+  engineUniform.unmap();
+
+  const bindGroup = device.createBindGroup({
+    label: "toodle post process bind group",
+    layout: pipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 0, resource: pingpong[0].createView() },
+      { binding: 1, resource: defaultSampler(device) },
+      { binding: 2, resource: engineUniform },
+    ],
+  });
+
+  return {
+    pipeline,
+    bindGroups: [bindGroup],
+  };
+}
 
 export function none(
   device: GPUDevice,
   presentationFormat: GPUTextureFormat,
   pingpong: [GPUTexture, GPUTexture],
-): PostProcess {
+): ScreenShaderDefinition {
   const pipeline = device.createRenderPipeline({
     label: "toodle post process - no action",
     layout: "auto",
@@ -155,7 +236,7 @@ export function crtScanLines(
   device: GPUDevice,
   presentationFormat: GPUTextureFormat,
   pingpong: [GPUTexture, GPUTexture],
-): PostProcess {
+): ScreenShaderDefinition {
   const pipeline = device.createRenderPipeline({
     label: "toodle color inversion post process",
     layout: "auto",
@@ -245,7 +326,7 @@ function colorInversion(
   device: GPUDevice,
   presentationFormat: GPUTextureFormat,
   pingpong: [GPUTexture, GPUTexture],
-): PostProcess {
+): ScreenShaderDefinition {
   const pipeline = device.createRenderPipeline({
     label: "toodle color inversion post process",
     layout: "auto",
@@ -364,4 +445,20 @@ fn vs_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOut {
 }
     `,
   });
+}
+
+// Gaussian function is
+// G(x) = exp(-x² / (2σ²))
+// where x is the distance from the center and σ is the standard deviation.
+function gaussianWeights(radius: number, sigma = radius / 2): number[] {
+  const weights = [];
+  let sum = 0;
+
+  for (let i = 0; i <= radius; i++) {
+    const w = Math.exp(-0.5 * (i / sigma) ** 2);
+    weights.push(w);
+    sum += i === 0 ? w : w * 2;
+  }
+
+  return weights.map((w) => w / sum); // normalize to sum = 1
 }

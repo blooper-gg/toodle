@@ -9,7 +9,6 @@ import {
   convertWorldToScreen,
   createProjectionMatrix,
 } from "./math/matrix";
-import { postProcess } from "./postprocess";
 import { Batcher } from "./scene/Batcher";
 import { Camera } from "./scene/Camera";
 import { QuadNode, type QuadOptions } from "./scene/QuadNode";
@@ -18,6 +17,7 @@ import type { Resolution } from "./screen/resolution";
 import type { EngineUniform } from "./shaders/EngineUniform";
 import type { IShader } from "./shaders/IShader";
 import { QuadShader } from "./shaders/QuadShader";
+import { blur } from "./shaders/postprocess/blur";
 import { TextNode, type TextOptions } from "./text/TextNode";
 import { AssetManager, type TextureId } from "./textures/AssetManager";
 import { initGpu } from "./utils/boilerplate";
@@ -355,7 +355,7 @@ export class Toodle {
 
     this.#renderPass.end();
 
-    postProcess(
+    blur(
       this.#encoder,
       this.#context,
       this.#device,
