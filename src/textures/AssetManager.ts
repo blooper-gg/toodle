@@ -143,6 +143,8 @@ export class AssetManager {
    * await toodle.assets.loadTextures({
    *   "myImage": new URL("assets/image.png", "https://mywebsite.com"),
    * });
+   *
+   * @deprecated use {@link registerBundle} instead. or {@link loadTexture} for debugging
    */
   async loadTextures(opts: TextureBundleOpts["textures"]): Promise<void> {
     await Promise.all(

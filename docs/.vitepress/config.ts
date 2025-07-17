@@ -65,6 +65,7 @@ export default defineConfig({
             link: "/examples/texture-bundles-prebaked",
           },
           { text: "Cropping", link: "/examples/transparent-cropping" },
+          { text: "Jumbo Textures", link: "/examples/jumbo-textures" },
         ],
       },
       {
