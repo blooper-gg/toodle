@@ -93,26 +93,54 @@ const pipeline = device.createComputePipeline({
     entryPoint: "crop_and_output",
   },
 });
+
+const BOUNDING_BOX_SIZE = 4 * Uint32Array.BYTES_PER_ELEMENT;
+const WORKGROUP_SIZE = 8;
+
+const boundsUniform = device.createBuffer({
+  label: "Cropping Bounds Uniform Buffer",
+  size: BOUNDING_BOX_SIZE,
+  usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  mappedAtCreation: true,
+});
+const computeBuffer = new Uint32Array(boundsUniform.getMappedRange());
+computeBuffer.set([20, 20, texture.width - 20, texture.height - 20]);
+boundsUniform.unmap();
+
+const outBuffer = device.createBuffer({
+  label: "Cropping Dimensions Output Buffer",
+  size: BOUNDING_BOX_SIZE,
+  usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+});
+
 const bindGroup = device.createBindGroup({
   layout: pipeline.getBindGroupLayout(0),
   entries: [
     {
       binding: 0,
-      resource: inputTexture.createView({
-        dimension: "2d",
-        baseArrayLayer: inputLayer,
-        arrayLayerCount: 1,
-      }),
+      resource: inputTexture.createView(),
     },
     {
       binding: 1,
-      resource: outputTexture.createView({
-        dimension: "2d",
-      }),
+      resource: outputTexture.createView(),
     },
     { binding: 2, resource: { buffer: boundsUniform } },
+    { binding: 3, resource: { buffer: outBuffer } },
   ],
 });
+
+const encoder = device.createCommandEncoder();
+const pass = encoder.beginComputePass();
+pass.setPipeline(pipeline);
+pass.setBindGroup(0, bindGroup);
+pass.dispatchWorkgroups(
+  Math.ceil(texture.width / WORKGROUP_SIZE),
+  Math.ceil(texture.height / WORKGROUP_SIZE),
+);
+pass.end();
+device.queue.submit([encoder.finish()]);
+
+const croppedTexture = outputTexture;
 
 // const jumboTexture = new URL("img/shc.png", window.location.origin);
 
