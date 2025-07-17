@@ -1,0 +1,16 @@
+# Jumbo Textures
+
+There may be times when you have to load a texture that is too large to fit into your texture atlas. For example, a background for a fighting game might exceed 4096 pixels wide.
+
+Toodle will attempt to break jumbo textures down to fit it into the atlas. If the texture is larger than the atlas, you'll have to use `toodle.JumboQuad` when drawing the texture.
+
+::: warning
+
+This is a new feature. Please let us know if you encounter issues when using jumbo textures and `toodle.JumboQuad`.
+
+:::
+
+
+{toodle=snippets/jumbo-texture.ts width=400px height=400px}
+
+<<< @/snippets/jumbo-texture.ts
