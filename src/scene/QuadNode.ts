@@ -283,6 +283,10 @@ export class QuadNode extends SceneNode {
   };
 }
 
+export type JumboQuadOptions = QuadOptions & {
+  atlasCoords: AtlasCoords[];
+};
+
 export type QuadOptions = NodeOptions & {
   textureId?: TextureId;
   /**

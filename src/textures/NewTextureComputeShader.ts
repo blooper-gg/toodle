@@ -2,7 +2,7 @@ import type { Point } from "../coreTypes/Point";
 import type { Size } from "../coreTypes/Size";
 import { OneOrMany } from "../utils/one_or_many";
 import computeShader from "./texture-processing.wgsl";
-import type { ImageWithMetaData, TextureRegion } from "./types";
+import type { TextureRegion } from "./types";
 import { textureToBitmap } from "./util";
 
 // Constants

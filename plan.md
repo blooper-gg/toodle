@@ -5,3 +5,8 @@
 * provide toodle.assets.loadJumboTexture
 * provide toodle.assets.unloadJumboTexture
 * make writeInstance return the number of vertices
+
+
+or
+
+* hardcode texture cropping once

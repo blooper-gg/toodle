@@ -3,20 +3,19 @@ import type { Size } from "../coreTypes/Size";
 import type { Vec2 } from "../coreTypes/Vec2";
 import type { AtlasCoords } from "../textures/types";
 import { assert } from "../utils/assert";
-import { OneOrMany } from "../utils/one_or_many";
 import type { Pool } from "../utils/pool";
+import type { JumboQuadOptions } from "./QuadNode";
 import { QuadNode } from "./QuadNode";
-import type { QuadOptions } from "./QuadNode";
 import type { SceneNode } from "./SceneNode";
 
 const MAT3_SIZE = 12;
 const VEC4F_SIZE = 4;
 
 export class JumboQuadNode extends QuadNode {
+  #atlasCoords: AtlasCoords[];
   #matrixPool: Pool<Mat3>;
-  #atlasCoords: OneOrMany<AtlasCoords>;
 
-  constructor(options: QuadOptions, matrixPool: Pool<Mat3>) {
+  constructor(options: JumboQuadOptions, matrixPool: Pool<Mat3>) {
     assert(
       options.shader,
       "JumboQuadNode requires a shader to be explicitly provided",
@@ -32,13 +31,15 @@ export class JumboQuadNode extends QuadNode {
       writeInstance: writeJumboQuadInstance,
     };
 
-    const atlasCoords: OneOrMany<AtlasCoords> = options.atlasCoords;
+    super(
+      {
+        ...options,
+        atlasCoords: options.atlasCoords[0],
+      },
+      matrixPool,
+    );
 
-    options.atlasCoords = new OneOrMany<AtlasCoords>(atlasCoords.one);
-
-    super(options, matrixPool);
-
-    this.#atlasCoords = atlasCoords;
+    this.#atlasCoords = options.atlasCoords;
     this.#matrixPool = matrixPool;
   }
 
@@ -68,28 +69,12 @@ export class JumboQuadNode extends QuadNode {
    * The atlas coordinates for the quad. These determine the region in the texture atlas
    * that is sampled for rendering.
    */
-  get atlasCoords(): AtlasCoords[] {
-    return this.#atlasCoords.many;
+  get atlasCoords(): AtlasCoords {
+    throw new Error("JumboQuadNode does not have a single atlas coords");
   }
 
-  /**
-   * Returns a list of all atlas indices used by the Node.
-   */
-  get atlasIndices(): number[] {
-    const indices: number[] = [];
-    for (const coord of this.#atlasCoords) {
-      indices.push(coord.atlasIndex);
-    }
-    return indices;
-  }
-
-  /**
-   * Sets the atlas coords for the quad. This is for advanced use cases and by default these are
-   * set automatically to reference the right texture atlas region.
-   * @param value - The new atlas coords.
-   */
-  setAtlasCoords(value: OneOrMany<AtlasCoords>) {
-    this.#atlasCoords = value;
+  get jumboAtlasCoords(): AtlasCoords[] {
+    return this.#atlasCoords;
   }
 }
 
@@ -105,20 +90,24 @@ function writeJumboQuadInstance(
   }
 
   // Initialize the local offset for each tile to render...
-  let tileComponentOffset = 0;
+  let tileOffset = 0;
   // Iterate through each IndexedAtlasCoordinate found in the coords...
-  for (const coord of node.atlasCoords) {
-    array.set(node.getTileMatrix(coord), offset + tileComponentOffset);
-    // Increment the local offset by the size of our transformation matrix...
-    tileComponentOffset += MAT3_SIZE;
+  for (const coord of node.jumboAtlasCoords) {
+    // write model matrix
+    array.set(node.matrixWithSize, offset + tileOffset);
+    tileOffset += MAT3_SIZE;
 
+    // write tint color
     array.set(
       [node.color.r, node.color.g, node.color.b, node.color.a],
-      offset + tileComponentOffset,
+      offset + tileOffset,
     );
     //...increment the local offset by the size of our color vector
-    tileComponentOffset += VEC4F_SIZE;
+    tileOffset += VEC4F_SIZE;
 
+    // write uv offset and scale
+    // location 4 are the uv offset and scale used to sample the texture atlas. these are in normalized texel coordinates.
+    // @location(4) uvOffsetAndScale: vec4<f32>,
     array.set(
       [
         coord.uvOffset.x,
@@ -126,35 +115,34 @@ function writeJumboQuadInstance(
         coord.uvScale.width,
         coord.uvScale.height,
       ],
-      offset + tileComponentOffset,
+      offset + tileOffset,
     );
-    // Increment by the size of our uv components.
-    tileComponentOffset += VEC4F_SIZE;
+    tileOffset += VEC4F_SIZE;
 
+    // write crop offset and scale
+    // location 5 is the crop offset from center and scale. These are ratios applied to the unit quad.
+    // @location(5) cropOffsetAndScale: vec4<f32>,
     array.set(
       [
-        (node.drawOffset.x / 2 + coord.drawOffset.x) /
-          (coord.croppedSize.width || 1),
-        (node.drawOffset.y / 2 - coord.drawOffset.y) /
-          (coord.croppedSize.height || 1),
-        node.extra.cropRatio().width,
-        node.extra.cropRatio().height,
+        coord.uvOffset.x / (coord.originalSize.width || 1),
+        coord.uvOffset.y / (coord.originalSize.height || 1),
+        // TODO: make this work for cropped textures
+        1,
+        1,
       ],
-      offset + tileComponentOffset,
+      offset + tileOffset,
     );
+    tileOffset += VEC4F_SIZE;
 
-    tileComponentOffset += VEC4F_SIZE;
-
+    // write atlas index
     new DataView(array.buffer).setUint32(
-      array.byteOffset +
-        (offset + tileComponentOffset) * Float32Array.BYTES_PER_ELEMENT,
+      array.byteOffset + (offset + tileOffset) * Float32Array.BYTES_PER_ELEMENT,
       coord.atlasIndex,
       true,
     );
-    // Increment by our indexing value
-    tileComponentOffset += VEC4F_SIZE;
+    tileOffset += VEC4F_SIZE;
   }
   // Write our instance and return the number of sprites added to the buffer...
-  node.writeInstance?.(array, offset + tileComponentOffset);
-  return node.atlasCoords.length;
+  node.writeInstance?.(array, offset + tileOffset);
+  return node.jumboAtlasCoords.length;
 }
