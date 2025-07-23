@@ -10,6 +10,8 @@ This is a new feature. Please let us know if you encounter issues when using jum
 
 :::
 
+Image is copyright [Scramble Heart City](https://scrambleheart.city/)
+
 {toodle=snippets/jumbo-textures.ts width=400px height=400px}
 
 <<< @/snippets/jumbo-textures.ts
