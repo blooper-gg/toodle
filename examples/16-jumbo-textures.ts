@@ -5,6 +5,7 @@ const canvas = createCanvas(window.innerWidth, window.innerHeight);
 
 const toodle = await Toodle.attach(canvas, { filter: "nearest" });
 
+
 await toodle.assets.registerBundle("jumbos", {
   textures: {
     tile0: new URL("/jumbo/stage_0_0.png", import.meta.url),

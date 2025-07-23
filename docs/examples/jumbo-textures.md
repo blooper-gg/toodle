@@ -10,6 +10,6 @@ This is a new feature. Please let us know if you encounter issues when using jum
 
 :::
 
-{toodle=snippets/jumbo-texture.ts width=400px height=400px}
+{toodle=snippets/jumbo-textures.ts width=400px height=400px}
 
-<<< @/snippets/jumbo-texture.ts
+<<< @/snippets/jumbo-textures.ts

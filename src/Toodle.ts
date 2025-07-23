@@ -460,7 +460,10 @@ export class Toodle {
   JumboQuad(assetId: TextureId, options: JumboQuadOptions) {
     options.shader ??= this.#defaultQuadShader();
     options.textureId ??= assetId;
-    options.cropOffset ??= this.assets.extra.getTextureOffset(assetId);
+    options.cropOffset ??= {
+      x: 0,
+      y: 0,
+    };
     options.tiles ??= [];
 
     for (const tile of options.tiles) {

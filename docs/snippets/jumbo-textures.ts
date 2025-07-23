@@ -2,19 +2,16 @@ import { Toodle } from "@blooper.gg/toodle";
 
 const canvas = document.querySelector("canvas")!;
 const toodle = await Toodle.attach(canvas, {
-  filter: "nearest",
   limits: { textureArrayLayers: 5 },
 });
 
-const jumboTextures = {
-  // neil todo: change this when ready to deploy
-  shc: new URL("img/JumboGrass.png", "https://toodle.gg"),
-  apple: new URL("img/ItemApple.png", "https://toodle.gg"),
-};
-
-await toodle.assets.registerBundle("big textures", {
-  textures: jumboTextures,
+await toodle.assets.registerBundle("stage", {
+  textures: {
+    tile0: new URL("/jumbo/stage_0_0.png", "https://toodle.gg"),
+    tile1: new URL("/jumbo/stage_4096_0.png", "https://toodle.gg"),
+  },
   autoLoad: true,
+  cropTransparentPixels: true,
 });
 
 // State for demo
@@ -52,7 +49,7 @@ function frame() {
   toodle.startFrame();
   if (state.showAtlas) {
     toodle.draw(
-      toodle.Quad("apple", {
+      toodle.Quad("tile0", {
         shader: atlasPreviewShader,
         idealSize: {
           width: toodle.resolution.width,
@@ -62,8 +59,22 @@ function frame() {
     );
     toodle.camera.x = 0;
   } else {
-    toodle.draw(toodle.JumboQuad("shc"));
+    toodle.draw(
+      toodle.JumboQuad("stage", {
+        tiles: [
+          {
+            textureId: "tile0",
+            offset: { x: 0, y: 0 },
+          },
+          {
+            textureId: "tile1",
+            offset: { x: 4096, y: 0 },
+          },
+        ],
+      }),
+    );
     toodle.camera.x = Math.sin(toodle.frameCount / 700) * 2000;
+    toodle.camera.zoom = 0.3;
   }
   toodle.endFrame();
   requestAnimationFrame(frame);
