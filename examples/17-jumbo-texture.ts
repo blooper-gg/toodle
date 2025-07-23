@@ -13,30 +13,45 @@ await toodle.assets.registerBundle("jumbos", {
   autoLoad: true,
 });
 
+const tile0Size = toodle.assets.getSize("tile0");
+const tile1Size = toodle.assets.getSize("tile1");
 
-const tile0Size = toodle.assets.getSize('tile0');
-const tile1Size = toodle.assets.getSize('tile1');
+const tile0Coords = toodle.assets.extra.getAtlasCoords("tile0");
+const tile1Coords = toodle.assets.extra.getAtlasCoords("tile1");
 
-const tile0Coords = toodle.assets.extra.getAtlasCoords('tile0');
-const tile1Coords = toodle.assets.extra.getAtlasCoords('tile1');
-
-console.log({tile0Coords, tile1Coords});
+console.log({ tile0Coords, tile1Coords });
 
 const size = {
   width: tile0Size.width + tile1Size.width,
   height: tile0Size.height,
-}
+};
 console.log(size);
 
+const node = toodle.Node({
+  position: { x: 0, y: 1000 },
+});
+
+node.add(toodle.Quad("tile0"));
+const tile1 = node.add(
+  toodle
+    .Quad("tile1", {
+      color: { r: 1, g: 0, b: 0, a: 1 },
+    })
+    .setBounds({ left: 4096 / 2 }),
+);
+
+console.log({ tile1Size: tile1.size });
 
 function frame() {
   toodle.startFrame();
+
+  toodle.draw(node);
   // toodle.draw(toodle.Quad("tile0"));
 
   // const tile1 = toodle.Quad("tile1").setBounds({ left: 4096 / 2, y: 20 });
   // toodle.draw(tile1);
 
-  const jumbo = toodle.JumboQuad('tile0', {
+  const jumbo = toodle.JumboQuad("tile0", {
     idealSize: size,
     jumboAtlasCoords: [tile0Coords[0], tile1Coords[0]],
   });

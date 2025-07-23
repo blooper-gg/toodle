@@ -1,7 +1,7 @@
 import {
-  type StructuredView,
   makeShaderDataDefinitions,
   makeStructuredView,
+  type StructuredView,
 } from "webgpu-utils";
 import { WgslReflect } from "wgsl_reflect";
 import type { SceneNode } from "../scene/SceneNode";
