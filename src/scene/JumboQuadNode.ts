@@ -1,27 +1,44 @@
 import { type Mat3, mat3 } from "wgpu-matrix";
 import type { Size } from "../coreTypes/Size";
 import type { Vec2 } from "../coreTypes/Vec2";
+import type { TextureId } from "../textures/AssetManager";
 import type { AtlasCoords } from "../textures/types";
 import { assert } from "../utils/assert";
 import type { Pool } from "../utils/pool";
-import type { JumboQuadOptions } from "./QuadNode";
-import { QuadNode } from "./QuadNode";
+import { QuadNode, type QuadOptions } from "./QuadNode";
 import type { SceneNode } from "./SceneNode";
 
 const MAT3_SIZE = 12;
 const VEC4F_SIZE = 4;
 
 export type JumboTileDef = {
+  /** Texture id of the tile */
+  textureId: TextureId;
   /** The offset of this tile in texels from the top left of the full texture */
-  tileOffset: Vec2;
-  /** The size of the tile in texels */
-  tileSize: Size;
-  /** The url of the texture */
-  url: URL;
+  offset: Vec2;
+  /** The size of the tile in texels. If not provided, the size will be inferred from the texture atlas. */
+  size: Size;
+  /** The coordinates of the tile in the texture atlas. If not provided, the size will be read from the loaded texture. */
+  atlasCoords: AtlasCoords;
+};
+
+export type JumboTileOptions = {
+  /** Texture id of the tile */
+  textureId: TextureId;
+  /** The offset of this tile in texels from the top left of the full texture */
+  offset: Vec2;
+  /** The size of the tile in texels. If not provided, the size will be inferred from the texture atlas. */
+  size?: Size;
+  /** The coordinates of the tile in the texture atlas. If not provided, the size will be read from the loaded texture. */
+  atlasCoords?: AtlasCoords;
+};
+
+export type JumboQuadOptions = Omit<QuadOptions, "atlasCoords"> & {
+  tiles: JumboTileOptions[];
 };
 
 export class JumboQuadNode extends QuadNode {
-  #jumboAtlasCoords: AtlasCoords[];
+  #tiles: JumboTileDef[];
   #matrixPool: Pool<Mat3>;
 
   constructor(options: JumboQuadOptions, matrixPool: Pool<Mat3>) {
@@ -31,8 +48,8 @@ export class JumboQuadNode extends QuadNode {
     );
 
     assert(
-      options.jumboAtlasCoords,
-      "QuadNode requires atlas coords to be explicitly provided",
+      options.tiles && options.tiles.length > 0,
+      "JumboQuadNode requires at least one tile to be provided",
     );
 
     options.render ??= {
@@ -43,35 +60,56 @@ export class JumboQuadNode extends QuadNode {
     super(
       {
         ...options,
-        atlasCoords: options.jumboAtlasCoords[0],
+        atlasCoords: options.tiles[0].atlasCoords,
       },
       matrixPool,
     );
 
-    this.#jumboAtlasCoords = options.jumboAtlasCoords;
     this.#matrixPool = matrixPool;
+
+    this.#tiles = [];
+
+    for (const tile of options.tiles) {
+      assert(
+        tile.atlasCoords,
+        "JumboQuadNode requires atlas coords to be provided",
+      );
+
+      assert(tile.size, "JumboQuadNode requires a size to be provided");
+
+      this.#tiles.push({
+        textureId: tile.textureId,
+        offset: tile.offset,
+        size: tile.size,
+        atlasCoords: tile.atlasCoords,
+      });
+    }
   }
 
   get atlasCoords(): AtlasCoords {
     throw new Error("JumboQuadNode does not have a single atlas coords");
   }
 
-  get jumboAtlasCoords(): AtlasCoords[] {
-    return this.#jumboAtlasCoords;
+  get tiles(): JumboTileDef[] {
+    return this.#tiles;
   }
 
-  getTileMatrix(offset: Vec2, size: Size) {
+  getTileMatrix(tile: JumboTileDef) {
     const matrix = mat3.clone(this.matrix, this.#matrixPool.get());
 
     // Apply translation
-    mat3.translate(matrix, [offset.x, offset.y], matrix);
+    const centerOffset = {
+      x: tile.offset.x === 0 ? 0 : tile.offset.x / 2 + tile.size.width / 2,
+      y: tile.offset.y === 0 ? 0 : tile.offset.y / 2 + tile.size.height / 2,
+    };
+    mat3.translate(matrix, [centerOffset.x, centerOffset.y], matrix);
 
     // Apply scaling by size
     mat3.scale(
       matrix,
       [
-        size.width * 1 * (this.flipX ? -1 : 1),
-        size.height * 1 * (this.flipY ? -1 : 1),
+        tile.size.width * (this.flipX ? -1 : 1),
+        tile.size.height * (this.flipY ? -1 : 1),
       ],
       matrix,
     );
@@ -94,29 +132,19 @@ function writeJumboQuadInstance(
   // Initialize the local offset for each tile to render...
   let tileOffset = 0;
 
-  let index = 0;
+  let tmpIndex = 0;
 
   // Iterate through each AtlasCoords found in the coords...
-  for (const coord of node.jumboAtlasCoords) {
-    // write model matrix
-    let matrix: Mat3;
-    if (index === 0) {
-      matrix = node.getTileMatrix({ x: 0, y: 0 }, coord.originalSize);
-    } else {
-      matrix = node.getTileMatrix(
-        { x: 4096 / 2 + coord.originalSize.width / 2, y: 0 },
-        {
-          width: coord.originalSize.width,
-          height: coord.originalSize.height,
-        },
-      );
-    }
+  for (const tile of node.tiles) {
+    const coord = tile.atlasCoords;
 
+    // write model matrix
+    const matrix = node.getTileMatrix(tile);
     array.set(matrix, offset + tileOffset);
     tileOffset += MAT3_SIZE;
 
     // write tint color
-    if (index === 0) {
+    if (tmpIndex === 0) {
       node.color = { r: 1, g: 1, b: 1, a: 1 };
     } else {
       node.color = { r: 0, g: 1, b: 0, a: 1 };
@@ -162,10 +190,10 @@ function writeJumboQuadInstance(
     );
     tileOffset += VEC4F_SIZE;
 
-    index++;
+    tmpIndex++;
   }
 
   // Write our instance and return the number of sprites added to the buffer...
   node.writeInstance?.(array, offset + tileOffset);
-  return node.jumboAtlasCoords.length;
+  return node.tiles.length;
 }

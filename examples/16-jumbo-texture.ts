@@ -53,7 +53,18 @@ function frame() {
 
   const jumbo = toodle.JumboQuad("tile0", {
     idealSize: size,
-    jumboAtlasCoords: [tile0Coords[0], tile1Coords[0]],
+    tiles: [
+      {
+        textureId: "tile0",
+        offset: { x: 0, y: 0 },
+      },
+      {
+        textureId: "tile1",
+        offset: { x: 4096, y: 0 },
+      },
+    ],
+    rotation: performance.now() * 0.01,
+    scale: 1 + Math.sin(performance.now() * 0.001),
   });
   toodle.draw(jumbo);
   toodle.endFrame();

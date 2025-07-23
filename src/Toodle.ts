@@ -11,12 +11,8 @@ import {
 } from "./math/matrix";
 import { Batcher } from "./scene/Batcher";
 import { Camera } from "./scene/Camera";
-import { JumboQuadNode } from "./scene/JumboQuadNode";
-import {
-  type JumboQuadOptions,
-  QuadNode,
-  type QuadOptions,
-} from "./scene/QuadNode";
+import { JumboQuadNode, type JumboQuadOptions } from "./scene/JumboQuadNode";
+import { QuadNode, type QuadOptions } from "./scene/QuadNode";
 import { type NodeOptions, SceneNode } from "./scene/SceneNode";
 import type { Resolution } from "./screen/resolution";
 import type { EngineUniform } from "./shaders/EngineUniform";
@@ -461,18 +457,27 @@ export class Toodle {
    * @param options - QuadOptions for Quad creation
    *
    */
-  JumboQuad(assetId: TextureId, options: JumboQuadOptions = {}) {
+  JumboQuad(assetId: TextureId, options: JumboQuadOptions) {
     options.shader ??= this.#defaultQuadShader();
-    options.jumboAtlasCoords ??= this.assets.extra.getAtlasCoords(assetId);
     options.textureId ??= assetId;
     options.cropOffset ??= this.assets.extra.getTextureOffset(assetId);
+    options.tiles ??= [];
+
+    for (const tile of options.tiles) {
+      if (!tile.size) {
+        tile.size = this.assets.getSize(tile.textureId);
+      }
+
+      if (!tile.atlasCoords) {
+        tile.atlasCoords = this.assets.extra.getAtlasCoords(tile.textureId)[0];
+      }
+    }
 
     let width = 0;
     let height = 0;
-
-    for (const atlasCoords of options.jumboAtlasCoords) {
-      width += atlasCoords.uvScale.width * this.#atlasSize.width;
-      height += atlasCoords.uvScale.height * this.#atlasSize.height;
+    for (const tile of options.tiles) {
+      width += tile.size!.width;
+      height += tile.size!.height;
     }
 
     options.region ??= {
