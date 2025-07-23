@@ -11,6 +11,7 @@ import {
 } from "./math/matrix";
 import { Batcher } from "./scene/Batcher";
 import { Camera } from "./scene/Camera";
+import { JumboQuadNode, type JumboQuadOptions } from "./scene/JumboQuadNode";
 import { QuadNode, type QuadOptions } from "./scene/QuadNode";
 import { type NodeOptions, SceneNode } from "./scene/SceneNode";
 import type { Resolution } from "./screen/resolution";
@@ -414,7 +415,7 @@ export class Toodle {
   /**
    * Create a new quad node.
    *
-   * @param assetId - The ID of the asset to use for the quad. This must have been loaded with toodle.assets.loadTextures.
+   * @param assetId - The ID of the asset to use for the quad. This must have been loaded with toodle.assets.loadBundle.
    *
    * @param options - QuadOptions for Quad creation
    * @param options
@@ -446,6 +447,54 @@ export class Toodle {
 
     const quad = new QuadNode(options, this.#matrixPool);
     return quad;
+  }
+
+  /**
+   * Create a jumbo quad node. This contains multiple tiles for a single texture.
+   *
+   * @param assetId - The ID of the asset to use for the jumbo quad. This must have been loaded with toodle.assets.loadTextures.
+   *
+   * @param options - QuadOptions for Quad creation
+   *
+   */
+  JumboQuad(assetId: TextureId, options: JumboQuadOptions) {
+    options.shader ??= this.#defaultQuadShader();
+    options.textureId ??= assetId;
+    options.cropOffset ??= {
+      x: 0,
+      y: 0,
+    };
+    options.tiles ??= [];
+
+    for (const tile of options.tiles) {
+      if (!tile.size) {
+        tile.size = this.assets.getSize(tile.textureId);
+      }
+
+      if (!tile.atlasCoords) {
+        tile.atlasCoords = this.assets.extra.getAtlasCoords(tile.textureId)[0];
+      }
+    }
+
+    let width = 0;
+    let height = 0;
+    for (const tile of options.tiles) {
+      width += tile.size!.width;
+      height += tile.size!.height;
+    }
+
+    options.region ??= {
+      x: 0,
+      y: 0,
+      width,
+      height,
+    };
+
+    options.idealSize ??= { width, height };
+
+    options.atlasSize = this.#atlasSize;
+
+    return new JumboQuadNode(options, this.#matrixPool);
   }
 
   /**
