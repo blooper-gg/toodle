@@ -6,10 +6,9 @@ Toodle will attempt to break jumbo textures down to fit it into the atlas. If th
 
 ::: warning
 
-This is a new feature. Please let us know if you encounter issues when using jumbo textures and `toodle.JumboQuad`.
+This is a new feature. Please let us know if you encounter issues when using jumbo textures and `toodle.JumboQuad`. Custom shaders expecting uvs to range from 0 to 1 will not work correctly.
 
 :::
-
 
 {toodle=snippets/jumbo-texture.ts width=400px height=400px}
 
