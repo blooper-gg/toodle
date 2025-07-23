@@ -132,8 +132,6 @@ function writeJumboQuadInstance(
   // Initialize the local offset for each tile to render...
   let tileOffset = 0;
 
-  let tmpIndex = 0;
-
   // Iterate through each AtlasCoords found in the coords...
   for (const tile of node.tiles) {
     const coord = tile.atlasCoords;
@@ -144,11 +142,6 @@ function writeJumboQuadInstance(
     tileOffset += MAT3_SIZE;
 
     // write tint color
-    if (tmpIndex === 0) {
-      node.color = { r: 1, g: 1, b: 1, a: 1 };
-    } else {
-      node.color = { r: 0, g: 1, b: 0, a: 1 };
-    }
     array.set(
       [node.color.r, node.color.g, node.color.b, node.color.a],
       offset + tileOffset,
@@ -170,13 +163,30 @@ function writeJumboQuadInstance(
     );
     tileOffset += VEC4F_SIZE;
 
+    const cropRatio = !coord.uvScaleCropped
+      ? { width: 1, height: 1 }
+      : {
+          width: coord.uvScaleCropped.width / coord.uvScale.width,
+          height: coord.uvScaleCropped.height / coord.uvScale.height,
+        };
     // write crop offset and scale
     // location 5 is the crop offset from center and scale. These are ratios applied to the unit quad.
     // @location(5) cropOffsetAndScale: vec4<f32>,
     array.set(
       [
-        // TODO: make this work for cropped textures
-        0, 0, 1, 1,
+        // convert the offset in world space to the offset in the local space of the quad
+        // this offset is applied to the unit quad _before_ the model matrix is applied
+        // we divide by 2 because we want the center of the remaining region and not the full shift.
+        // for example, if we crop the leftmost 90px of a 100px wide texture
+        // we want the offset to be 45px and not 90px
+        tile.atlasCoords.cropOffset.x /
+          2 /
+          (tile.atlasCoords.originalSize.width || 1),
+        tile.atlasCoords.cropOffset.y /
+          2 /
+          (tile.atlasCoords.originalSize.height || 1),
+        cropRatio.width,
+        cropRatio.height,
       ],
       offset + tileOffset,
     );
@@ -189,8 +199,6 @@ function writeJumboQuadInstance(
       true,
     );
     tileOffset += VEC4F_SIZE;
-
-    tmpIndex++;
   }
 
   // Write our instance and return the number of sprites added to the buffer...

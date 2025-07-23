@@ -487,6 +487,8 @@ export class Toodle {
       height,
     };
 
+    options.idealSize ??= { width, height };
+
     options.atlasSize = this.#atlasSize;
 
     return new JumboQuadNode(options, this.#matrixPool);
