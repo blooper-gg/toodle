@@ -8,5 +8,5 @@ export type RenderComponent = {
   /**
    * Write cpu instance data to the buffer
    */
-  writeInstance: (node: SceneNode, dst: Float32Array, offset: number) => void;
+  writeInstance: (node: SceneNode, dst: Float32Array, offset: number) => number;
 };

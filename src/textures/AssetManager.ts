@@ -1,6 +1,7 @@
 import type { Size } from "../coreTypes/Size";
 import type { Vec2 } from "../coreTypes/Vec2";
 import type { Limits } from "../limits";
+import { JumboQuadNode } from "../scene/JumboQuadNode";
 import { QuadNode } from "../scene/QuadNode";
 import type { SceneNode } from "../scene/SceneNode";
 import { FontPipeline } from "../text/FontPipeline";
@@ -14,7 +15,7 @@ import type {
   PixiRegion,
   TextureBundleOpts,
   TextureRegion,
-  TextureWithMetadata,
+  TextureWithMetadata
 } from "./types";
 import { getBitmapFromUrl, packBitmapsToAtlas } from "./util";
 
@@ -28,6 +29,14 @@ type Bundle = {
   atlasIndices: number[];
 };
 
+type JumboTileDef = {
+  /** The offset of this tile in texels from the top left of the full texture */
+  texelOffset: Vec2;
+  /** The url of the texture */
+  url: URL;
+}
+
+
 export class AssetManager {
   readonly textureAtlas: GPUTexture;
   #device: GPUDevice;
@@ -38,7 +47,6 @@ export class AssetManager {
   #cropComputeShader: TextureComputeShader;
   #limits: Limits;
   #availableIndices: Set<number> = new Set();
-  #currentAtlasIndex = 0;
 
   constructor(
     device: GPUDevice,
@@ -319,7 +327,7 @@ export class AssetManager {
   }
 
   validateTextureReference(node: SceneNode | QuadNode) {
-    if (!(node instanceof QuadNode) || node.isPrimitive) return;
+    if (!(node instanceof QuadNode) || node.isPrimitive || node instanceof JumboQuadNode) return;
 
     const coords: AtlasCoords[] | undefined = this.#textures.get(
       node.textureId,

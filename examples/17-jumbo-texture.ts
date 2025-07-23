@@ -13,12 +13,34 @@ await toodle.assets.registerBundle("jumbos", {
   autoLoad: true,
 });
 
+
+const tile0Size = toodle.assets.getSize('tile0');
+const tile1Size = toodle.assets.getSize('tile1');
+
+const tile0Coords = toodle.assets.extra.getAtlasCoords('tile0');
+const tile1Coords = toodle.assets.extra.getAtlasCoords('tile1');
+
+console.log({tile0Coords, tile1Coords});
+
+const size = {
+  width: tile0Size.width + tile1Size.width,
+  height: tile0Size.height,
+}
+console.log(size);
+
+
 function frame() {
   toodle.startFrame();
-  toodle.draw(toodle.Quad("tile0"));
+  // toodle.draw(toodle.Quad("tile0"));
 
-  const tile1 = toodle.Quad("tile1").setBounds({ left: 4096 / 2, y: 20 });
-  toodle.draw(tile1);
+  // const tile1 = toodle.Quad("tile1").setBounds({ left: 4096 / 2, y: 20 });
+  // toodle.draw(tile1);
+
+  const jumbo = toodle.JumboQuad('tile0', {
+    idealSize: size,
+    jumboAtlasCoords: [tile0Coords[0], tile1Coords[0]],
+  });
+  toodle.draw(jumbo);
   toodle.endFrame();
   requestAnimationFrame(frame);
 }

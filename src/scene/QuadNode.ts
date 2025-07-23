@@ -284,7 +284,7 @@ export class QuadNode extends SceneNode {
 }
 
 export type JumboQuadOptions = QuadOptions & {
-  atlasCoords: AtlasCoords[];
+  jumboAtlasCoords?: AtlasCoords[];
 };
 
 export type QuadOptions = NodeOptions & {
