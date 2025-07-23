@@ -29,13 +29,6 @@ type Bundle = {
   atlasIndices: number[];
 };
 
-type JumboTileDef = {
-  /** The offset of this tile in texels from the top left of the full texture */
-  texelOffset: Vec2;
-  /** The url of the texture */
-  url: URL;
-};
-
 export class AssetManager {
   readonly textureAtlas: GPUTexture;
   #device: GPUDevice;

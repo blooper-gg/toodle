@@ -11,6 +11,15 @@ import type { SceneNode } from "./SceneNode";
 const MAT3_SIZE = 12;
 const VEC4F_SIZE = 4;
 
+export type JumboTileDef = {
+  /** The offset of this tile in texels from the top left of the full texture */
+  tileOffset: Vec2;
+  /** The size of the tile in texels */
+  tileSize: Size;
+  /** The url of the texture */
+  url: URL;
+};
+
 export class JumboQuadNode extends QuadNode {
   #jumboAtlasCoords: AtlasCoords[];
   #matrixPool: Pool<Mat3>;
