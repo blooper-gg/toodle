@@ -15,7 +15,7 @@ import type {
   PixiRegion,
   TextureBundleOpts,
   TextureRegion,
-  TextureWithMetadata
+  TextureWithMetadata,
 } from "./types";
 import { getBitmapFromUrl, packBitmapsToAtlas } from "./util";
 
@@ -34,8 +34,7 @@ type JumboTileDef = {
   texelOffset: Vec2;
   /** The url of the texture */
   url: URL;
-}
-
+};
 
 export class AssetManager {
   readonly textureAtlas: GPUTexture;
@@ -327,7 +326,12 @@ export class AssetManager {
   }
 
   validateTextureReference(node: SceneNode | QuadNode) {
-    if (!(node instanceof QuadNode) || node.isPrimitive || node instanceof JumboQuadNode) return;
+    if (
+      !(node instanceof QuadNode) ||
+      node.isPrimitive ||
+      node instanceof JumboQuadNode
+    )
+      return;
 
     const coords: AtlasCoords[] | undefined = this.#textures.get(
       node.textureId,

@@ -1,11 +1,11 @@
 import { type Mat3, mat3, vec2 } from "wgpu-matrix";
-import type { Toodle } from "../Toodle";
 import type { Point } from "../coreTypes/Point";
 import type { Size } from "../coreTypes/Size";
 import type { Transform } from "../coreTypes/Transform";
 import type { Vec2 } from "../coreTypes/Vec2";
 import { deg2rad, rad2deg } from "../math/angle";
 import { createModelMatrix } from "../math/matrix";
+import type { Toodle } from "../Toodle";
 import type { RenderComponent } from "./RenderComponent";
 
 /**

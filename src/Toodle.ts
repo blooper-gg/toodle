@@ -12,7 +12,11 @@ import {
 import { Batcher } from "./scene/Batcher";
 import { Camera } from "./scene/Camera";
 import { JumboQuadNode } from "./scene/JumboQuadNode";
-import { JumboQuadOptions, QuadNode, type QuadOptions } from "./scene/QuadNode";
+import {
+  type JumboQuadOptions,
+  QuadNode,
+  type QuadOptions,
+} from "./scene/QuadNode";
 import { type NodeOptions, SceneNode } from "./scene/SceneNode";
 import type { Resolution } from "./screen/resolution";
 import type { EngineUniform } from "./shaders/EngineUniform";
@@ -482,7 +486,6 @@ export class Toodle {
 
     return new JumboQuadNode(options, this.#matrixPool);
   }
-
 
   /**
    * Create a new container node.
