@@ -1,4 +1,4 @@
-import { Toodle } from "@vaguevoid/toodle";
+import { Toodle } from "@blooper.gg/toodle";
 
 const canvas = document.querySelector("canvas")!;
 const toodle = await Toodle.attach(canvas, {
@@ -8,8 +8,8 @@ const toodle = await Toodle.attach(canvas, {
 
 const jumboTextures = {
   // neil todo: change this when ready to deploy
-  shc: new URL("img/JumboGrass.png", "http://toodle.void.dev"),
-  apple: new URL("img/ItemApple.png", "https://toodle.void.dev"),
+  shc: new URL("img/JumboGrass.png", "https://toodle.gg"),
+  apple: new URL("img/ItemApple.png", "https://toodle.gg"),
 };
 
 await toodle.assets.registerBundle("big textures", {
