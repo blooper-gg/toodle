@@ -88,13 +88,6 @@ export class JumboQuadNode extends QuadNode {
   getTileMatrix(tile: JumboTileDef) {
     const matrix = mat3.clone(this.matrix, this.#matrixPool.get());
 
-    // Apply translation
-    const centerOffset = {
-      x: tile.offset.x === 0 ? 0 : tile.offset.x / 2 + tile.size.width / 2,
-      y: tile.offset.y === 0 ? 0 : -tile.offset.y / 2 - tile.size.height / 2,
-    };
-    mat3.translate(matrix, [centerOffset.x, centerOffset.y], matrix);
-
     // Find maximum dimensions across all tiles
     const originalSize = {
       width: Math.max(...this.#tiles.map((t) => t.offset.x + t.size.width)),
@@ -105,6 +98,20 @@ export class JumboQuadNode extends QuadNode {
       width: this.size.width / originalSize.width,
       height: this.size.height / originalSize.height,
     };
+
+    // Apply translation
+    const centerOffset = {
+      x: tile.offset.x === 0 ? 0 : tile.offset.x / 2 + tile.size.width / 2,
+      y: tile.offset.y === 0 ? 0 : -tile.offset.y / 2 - tile.size.height / 2,
+    };
+    mat3.translate(
+      matrix,
+      [
+        centerOffset.x * proportionalSize.width,
+        centerOffset.y * proportionalSize.height,
+      ],
+      matrix,
+    );
 
     // Scale proportionally by size of the jumbo quad
     mat3.scale(
