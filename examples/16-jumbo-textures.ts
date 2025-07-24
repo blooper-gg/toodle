@@ -10,6 +10,7 @@ await toodle.assets.registerBundle("jumbos", {
   textures: {
     tile0: new URL("/jumbo/stage_0_0.png", import.meta.url),
     tile1: new URL("/jumbo/stage_4096_0.png", import.meta.url),
+    apple: new URL("/img/ItemApple.png", import.meta.url),
   },
   autoLoad: true,
   cropTransparentPixels: true,
@@ -46,8 +47,7 @@ function frame() {
     // rotation: performance.now() * 0.01,
     // scale: 1 + Math.sin(performance.now() * 0.001),
   });
-  toodle.draw(jumbo);
-  toodle.draw(toodle.JumboQuad("tile0", {
+  const shrunkenJumbo = toodle.JumboQuad("tile0", {
     tiles: [
       {
         textureId: "tile0",
@@ -63,7 +63,19 @@ function frame() {
       height: 200,
     },
     color: { r: 0, g: 0, b: 1, a: 1 },
+    layer: 1,
+  });
+
+  toodle.draw(jumbo);
+  toodle.draw(toodle.Quad('apple'))
+  toodle.draw(toodle.Quad("apple", {
+    position: { x: 0, y: -200 },
+    scale: 10,
+    layer: 1,
   }));
+  shrunkenJumbo.layer = 1;
+  toodle.draw(shrunkenJumbo);
+
   toodle.endFrame();
   requestAnimationFrame(frame);
 }

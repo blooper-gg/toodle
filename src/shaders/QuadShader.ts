@@ -106,7 +106,7 @@ export class QuadShader implements IShader {
       }
     }
 
-    this.#instanceIndex += nodes.length;
+    this.#instanceIndex += instanceCount;
 
     renderPass.draw(4, instanceCount, 0, batchStartInstanceIndex);
     return 1;
