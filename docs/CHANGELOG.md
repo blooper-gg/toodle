@@ -4,12 +4,12 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://www.npmjs.com/package/@blooper.gg/toodle)
 
-## [0.0.91](https://github.com/blooper-gg/toodle/releases/tag/0.0.91)
+## [0.0.89-0.0.92](https://github.com/blooper-gg/toodle/releases/tag/0.0.92)
 
+JumboQuad fixes:
+
+- Fix `toodle.JumboQuad` positioning bug when offset is 0
 - Fix `toodle.JumboQuad` tile positioning bug when `idealSize` is provided
-
-## [0.0.90](https://github.com/blooper-gg/toodle/releases/tag/0.0.90)
-
 - Fix `idealSize` option on `toodle.JumboQuad`
 
 ## [0.0.89](https://github.com/blooper-gg/toodle/releases/tag/0.0.89)

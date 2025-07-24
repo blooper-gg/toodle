@@ -100,9 +100,12 @@ export class JumboQuadNode extends QuadNode {
     };
 
     // Apply translation
+    // calculate the offset of the tile's center from the center of the jumbo quad
+    // eg if the tile is at (0,0) in texels and is 4000x4000 and the whole texture is 5000x5000 this would give us
+    // (2000 - 2500) / 2 = -250, -(2000 - 2500) / 2 = 250
     const centerOffset = {
-      x: tile.offset.x === 0 ? 0 : tile.offset.x / 2 + tile.size.width / 2,
-      y: tile.offset.y === 0 ? 0 : -tile.offset.y / 2 - tile.size.height / 2,
+      x: tile.offset.x + tile.size.width / 2 - originalSize.width / 2,
+      y: -(tile.offset.y + tile.size.height / 2 - originalSize.height / 2),
     };
     mat3.translate(
       matrix,
