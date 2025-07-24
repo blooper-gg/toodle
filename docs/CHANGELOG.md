@@ -4,6 +4,10 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://www.npmjs.com/package/@blooper.gg/toodle)
 
+## [0.0.89](https://github.com/blooper-gg/toodle/releases/tag/0.0.90)
+
+- Fix `idealSize` option on `toodle.JumboQuad`
+
 ## [0.0.89](https://github.com/blooper-gg/toodle/releases/tag/0.0.89)
 
 - Add `JumboQuadNode` to render a jumbo texture, see [jumbo texture example](https://toodle.gg/examples/jumbo-textures.html) for more details.

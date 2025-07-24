@@ -11,16 +11,7 @@ import type { SceneNode } from "./SceneNode";
 const MAT3_SIZE = 12;
 const VEC4F_SIZE = 4;
 
-export type JumboTileDef = {
-  /** Texture id of the tile */
-  textureId: TextureId;
-  /** The offset of this tile in texels from the top left of the full texture */
-  offset: Vec2;
-  /** The size of the tile in texels. If not provided, the size will be inferred from the texture atlas. */
-  size: Size;
-  /** The coordinates of the tile in the texture atlas. If not provided, the size will be read from the loaded texture. */
-  atlasCoords: AtlasCoords;
-};
+export type JumboTileDef = Required<JumboTileOptions>;
 
 export type JumboTileOptions = {
   /** Texture id of the tile */
@@ -38,7 +29,7 @@ export type JumboQuadOptions = Omit<QuadOptions, "atlasCoords"> & {
 };
 
 export class JumboQuadNode extends QuadNode {
-  #tiles: JumboTileDef[];
+  #tiles: Required<JumboTileOptions>[];
   #matrixPool: Pool<Mat3>;
 
   constructor(options: JumboQuadOptions, matrixPool: Pool<Mat3>) {
@@ -100,16 +91,27 @@ export class JumboQuadNode extends QuadNode {
     // Apply translation
     const centerOffset = {
       x: tile.offset.x === 0 ? 0 : tile.offset.x / 2 + tile.size.width / 2,
-      y: tile.offset.y === 0 ? 0 : tile.offset.y / 2 + tile.size.height / 2,
+      y: tile.offset.y === 0 ? 0 : -tile.offset.y / 2 - tile.size.height / 2,
     };
     mat3.translate(matrix, [centerOffset.x, centerOffset.y], matrix);
 
-    // Apply scaling by size
+    // Find maximum dimensions across all tiles
+    const originalSize = {
+      width: Math.max(...this.#tiles.map((t) => t.offset.x + t.size.width)),
+      height: Math.max(...this.#tiles.map((t) => t.offset.y + t.size.height)),
+    };
+
+    const proportionalSize = {
+      width: this.size.width / originalSize.width,
+      height: this.size.height / originalSize.height,
+    };
+
+    // Scale proportionally by size of the jumbo quad
     mat3.scale(
       matrix,
       [
-        tile.size.width * (this.flipX ? -1 : 1),
-        tile.size.height * (this.flipY ? -1 : 1),
+        tile.size.width * proportionalSize.width * (this.flipX ? -1 : 1),
+        tile.size.height * proportionalSize.height * (this.flipY ? -1 : 1),
       ],
       matrix,
     );

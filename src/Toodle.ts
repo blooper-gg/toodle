@@ -466,6 +466,12 @@ export class Toodle {
     };
     options.tiles ??= [];
 
+    // this holds the size of the full texture based on all of its tiles
+    const originalSize = {
+      width: 0,
+      height: 0,
+    };
+
     for (const tile of options.tiles) {
       if (!tile.size) {
         tile.size = this.assets.getSize(tile.textureId);
@@ -474,23 +480,27 @@ export class Toodle {
       if (!tile.atlasCoords) {
         tile.atlasCoords = this.assets.extra.getAtlasCoords(tile.textureId)[0];
       }
-    }
 
-    let width = 0;
-    let height = 0;
-    for (const tile of options.tiles) {
-      width += tile.size!.width;
-      height += tile.size!.height;
+      if (tile.offset.x + tile.size!.width > originalSize.width) {
+        originalSize.width = tile.offset.x + tile.size!.width;
+      }
+
+      if (tile.offset.y + tile.size!.height > originalSize.height) {
+        originalSize.height = tile.offset.y + tile.size!.height;
+      }
     }
 
     options.region ??= {
       x: 0,
       y: 0,
-      width,
-      height,
+      width: originalSize.width,
+      height: originalSize.height,
     };
 
-    options.idealSize ??= { width, height };
+    options.idealSize ??= {
+      width: originalSize.width,
+      height: originalSize.height,
+    };
 
     options.atlasSize = this.#atlasSize;
 

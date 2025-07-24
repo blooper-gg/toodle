@@ -47,6 +47,23 @@ function frame() {
     // scale: 1 + Math.sin(performance.now() * 0.001),
   });
   toodle.draw(jumbo);
+  toodle.draw(toodle.JumboQuad("tile0", {
+    tiles: [
+      {
+        textureId: "tile0",
+        offset: { x: 0, y: 0 },
+      },
+      {
+        textureId: "tile1",
+        offset: { x: 4096, y: 0 },
+      },
+    ],
+    idealSize: {
+      width: 200,
+      height: 200,
+    },
+    color: { r: 0, g: 0, b: 1, a: 1 },
+  }));
   toodle.endFrame();
   requestAnimationFrame(frame);
 }
