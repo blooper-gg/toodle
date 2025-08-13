@@ -104,11 +104,11 @@ export default defineConfig({
     ],
 
     editLink: {
-      pattern: "https://github.com/blooper-gg/toodle/edit/main/docs/:path",
+      pattern: "https://github.com/bloopgames/toodle/edit/main/docs/:path",
     },
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/blooper-gg/toodle" },
+      { icon: "github", link: "https://github.com/bloopgames/toodle" },
     ],
   },
   vue: {
@@ -212,7 +212,7 @@ export default defineConfig({
  *
  * Example, transforms the following:
  *
- * import { Toodle, Quad } from '@blooper.gg/toodle'
+ * import { Toodle, Quad } from '@bloop.gg/toodle'
  * const canvas = document.querySelector("canvas")!;
  *
  * into the following:

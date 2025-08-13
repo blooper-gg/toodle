@@ -1,11 +1,11 @@
 {
-  "name": "@blooper.gg/toodle",
-  "version": "0.0.74",
+  "name": "@bloop.gg/toodle",
+  "version": "0.0.94",
   "type": "module",
   "files": ["dist", "src"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/blooper-gg/toodle.git"
+    "url": "https://github.com/bloopgames/toodle.git"
   },
   "publishConfig": {
     "access": "public"

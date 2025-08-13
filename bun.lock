@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "@blooper.gg/toodle",
+      "name": "@bloop.gg/toodle",
       "dependencies": {
         "fflate": "^0.8.2",
         "webgpu-utils": "^1.9.3",
