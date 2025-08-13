@@ -4,6 +4,10 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://www.npmjs.com/package/@bloop.gg/toodle)
 
+## [0.0.94](https://github.com/bloopgames/toodle/releases/tag/0.0.94)
+
+- Rename package
+
 ## [0.0.89-0.0.93](https://github.com/bloopgames/toodle/releases/tag/0.0.93)
 
 JumboQuad fixes:
