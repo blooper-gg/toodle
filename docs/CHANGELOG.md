@@ -4,7 +4,7 @@ A detailed list of all notable changes for every released version.
 
 [All releases](https://www.npmjs.com/package/@bloop.gg/toodle)
 
-## [0.0.95](https://github.com/bloopgames/toodle/releases/tag/0.0.95)
+## [0.0.96](https://github.com/bloopgames/toodle/releases/tag/0.0.95)
 
 - Fix: `toodle.endFrame` now clears instance counts even if an uncaught error is thrown to avoid spamming the console with a ToodleInstanceCap error
 

@@ -318,11 +318,6 @@ export class Toodle {
         throw err;
       }
 
-      if (this.diagnostics.frames > 100 && this.diagnostics.frames < 1000) {
-        this.diagnostics.frames++;
-        throw new Error("test uncaught error in endFrame");
-      }
-
       for (const layer of this.#batcher.layers) {
         for (const pipeline of layer.pipelines) {
           this.diagnostics.pipelineSwitches++;
