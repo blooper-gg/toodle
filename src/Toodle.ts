@@ -292,50 +292,57 @@ export class Toodle {
    * toodle.endFrame();
    */
   endFrame() {
-    assert(
-      this.#renderPass,
-      "no render pass found. have you called startFrame?",
-    );
-    assert(this.#encoder, "no encoder found. have you called startFrame?");
-
-    mat3.mul(
-      this.#projectionMatrix,
-      this.camera.matrix,
-      this.#engineUniform.viewProjectionMatrix,
-    );
-    this.#engineUniform.resolution = this.#resolution;
-    for (const pipeline of this.#batcher.pipelines) {
-      pipeline.shader.startFrame(this.#device, this.#engineUniform);
-    }
-
-    this.diagnostics.instancesEnqueued = this.#batcher.nodes.length;
-    if (this.#batcher.nodes.length > this.#limits.instanceCount) {
-      const err = new Error(
-        `ToodleInstanceCap: ${this.batcher.nodes.length} instances enqueued, max is ${this.limits.instanceCount}`,
+    try {
+      assert(
+        this.#renderPass,
+        "no render pass found. have you called startFrame?",
       );
-      err.name = "ToodleInstanceCap";
-      throw err;
-    }
+      assert(this.#encoder, "no encoder found. have you called startFrame?");
 
-    for (const layer of this.#batcher.layers) {
-      for (const pipeline of layer.pipelines) {
-        this.diagnostics.pipelineSwitches++;
-        this.diagnostics.drawCalls += pipeline.shader.processBatch(
-          this.#renderPass,
-          pipeline.nodes,
-        );
+      mat3.mul(
+        this.#projectionMatrix,
+        this.camera.matrix,
+        this.#engineUniform.viewProjectionMatrix,
+      );
+      this.#engineUniform.resolution = this.#resolution;
+      for (const pipeline of this.#batcher.pipelines) {
+        pipeline.shader.startFrame(this.#device, this.#engineUniform);
       }
-    }
 
-    for (const pipeline of this.#batcher.pipelines) {
-      pipeline.shader.endFrame();
-    }
+      this.diagnostics.instancesEnqueued = this.#batcher.nodes.length;
+      if (this.#batcher.nodes.length > this.#limits.instanceCount) {
+        const err = new Error(
+          `ToodleInstanceCap: ${this.batcher.nodes.length} instances enqueued, max is ${this.limits.instanceCount}`,
+        );
+        err.name = "ToodleInstanceCap";
+        throw err;
+      }
 
-    this.#renderPass.end();
-    this.#device.queue.submit([this.#encoder.finish()]);
-    this.#batcher.flush();
-    this.#matrixPool.free();
-    this.diagnostics.frames++;
+      if (this.diagnostics.frames > 100 && this.diagnostics.frames < 1000) {
+        this.diagnostics.frames++;
+        throw new Error("test uncaught error in endFrame");
+      }
+
+      for (const layer of this.#batcher.layers) {
+        for (const pipeline of layer.pipelines) {
+          this.diagnostics.pipelineSwitches++;
+          this.diagnostics.drawCalls += pipeline.shader.processBatch(
+            this.#renderPass,
+            pipeline.nodes,
+          );
+        }
+      }
+
+      for (const pipeline of this.#batcher.pipelines) {
+        pipeline.shader.endFrame();
+      }
+      this.#renderPass.end();
+      this.#device.queue.submit([this.#encoder.finish()]);
+    } finally {
+      this.#batcher.flush();
+      this.#matrixPool.free();
+      this.diagnostics.frames++;
+    }
   }
 
   /**
